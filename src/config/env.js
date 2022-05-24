@@ -64,6 +64,10 @@ export const menuList = [
 				name: "解说管理",
 				router: "/cms/commentary:id",
 				type: 0,
+				meta: {
+					keepAlive: 0,
+					label: "解说管理"
+				},
 				// 菜单文件路径
 				children: [
 					{
@@ -71,21 +75,34 @@ export const menuList = [
 						name: "解说资源池",
 						router: "/cms/commentary/3",
 						type: 1,
-						viewPath: "views/cms/commentary/index.vue"
+						viewPath: "views/cms/commentary/index.vue",
+						// viewPath: "http://dev.doras.vcinema.cn:8111/movie_commentary/#/commentary?commentary_type=2&user_id=1&user_name=admin",
+						meta: {
+							keepAlive: 0,
+							label: "解说管理"
+						}
 					},
 					{
 						icon: "icon-favor",
 						name: "解说策划",
 						router: "/cms/commentary/0",
 						type: 1,
-						viewPath: "views/cms/commentary/index.vue"
+						viewPath: "views/cms/commentary/index.vue",
+						meta: {
+							keepAlive: 0,
+							label: "解说管理"
+						}
 					},
 					{
 						icon: "icon-workbench",
 						name: "待发布解说",
 						router: "/cms/commentary/1",
 						type: 1,
-						viewPath: "views/cms/commentary/index.vue"
+						viewPath: "views/cms/commentary/index.vue",
+						meta: {
+							keepAlive: 0,
+							label: "解说管理"
+						}
 					}
 				]
 			},
@@ -215,6 +232,28 @@ export const menuList = [
 						viewPath: "cool/modules/base/views/log.vue"
 					}
 				]
+			}
+		]
+	},
+	{
+		icon: "icon-task",
+		name: "demo",
+		router: "/demo",
+		type: 0,
+		children: [
+			{
+				icon: "icon-workbench",
+				name: "demo1",
+				router: "/demo/doc",
+				type: 1,
+				viewPath: "views/demo/views/crud.vue"
+			},
+			{
+				icon: "icon-workbench",
+				name: "demo2",
+				router: "/demo/doc2",
+				type: 1,
+				viewPath: "views/demo/views/demo.vue"
 			}
 		]
 	},

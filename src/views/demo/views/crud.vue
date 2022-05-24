@@ -2,13 +2,24 @@
 	<cl-crud ref="crud" @load="onLoad">
 		<el-row type="flex" align="middle">
 			<cl-refresh-btn></cl-refresh-btn>
-			<el-button
-				type="danger"
-			>
-				清空
-			</el-button>
-			<cl-filter>
+			<cl-add-btn></cl-add-btn>
+			<cl-multi-delete-btn></cl-multi-delete-btn>
+			<cl-query
+				field="status"
+				:list="[
+					{
+						label: '启用',
+						value: 1
+					},
+					{
+						label: '禁用',
+						value: 0
+					}
+				]"
+			></cl-query>
+			<cl-filter label="状态">
 				<el-select
+					size="mini"
 					v-model="selects.status"
 					@change="
 						val => {
@@ -20,22 +31,26 @@
 					"
 				>
 					<el-option value="" label="全部"></el-option>
-					<el-option :value="0" label="个人发布"></el-option>
-					<el-option :value="1" label="机构发布"></el-option>
+					<el-option :value="0" label="禁用"></el-option>
+					<el-option :value="1" label="启用"></el-option>
 				</el-select>
 			</cl-filter>
+			<el-button size="mini" @click="openForm">自定义测试表单</el-button>
 			<cl-flex1></cl-flex1>
-			<cl-filter>
-				<el-input
-          v-model.trim="selects.phone"
-          placeholder="发布者手机号"
-          clearable
-				/>
-			</cl-filter>
 			<cl-search-key
 				field="name"
-				placeholder="解说标题"
+				:field-list="[
+					{
+						label: '姓名',
+						value: 'name'
+					},
+					{
+						label: '身份证',
+						value: 'idCard'
+					}
+				]"
 			></cl-search-key>
+			<cl-adv-btn></cl-adv-btn>
 		</el-row>
 
 		<el-row>
@@ -45,6 +60,10 @@
 		<el-row>
 			<cl-pagination></cl-pagination>
 		</el-row>
+
+		<!-- 高级搜索 -->
+		<cl-adv-search ref="adv-search" v-bind="advSearch.props" v-on="advSearch.on">
+		</cl-adv-search>
 
 		<!-- 编辑、新增 -->
 		<cl-upsert ref="upsert" v-bind="upsert.props" v-on="upsert.on"> </cl-upsert>
@@ -94,7 +113,7 @@
 </template>
 
 <script>
-import { TestService } from "./utils/service";
+import { TestService } from "../utils/service";
 
 export default {
 	name: "crud-demo",
