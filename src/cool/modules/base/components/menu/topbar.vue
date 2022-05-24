@@ -7,7 +7,6 @@
 			@select="onSelect"
 		>
 			<el-menu-item v-for="(item, index) in list" :index="`${index}`" :key="index">
-				<icon-svg v-if="item.icon" :name="item.icon" :size="18"></icon-svg>
 				<span>{{ item.name }}</span>
 			</el-menu-item>
 		</el-menu>

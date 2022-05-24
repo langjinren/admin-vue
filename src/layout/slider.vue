@@ -1,6 +1,6 @@
 <template>
 	<div class="app-slider">
-		<div class="app-slider__logo" @click="toHome">
+		<div class="app-slider__logo">
 			<img src="@/assets/icon/logo/silder-simple.png" />
 			<span v-if="!menuCollapse || browser.isMini">{{ app.name }}</span>
 		</div>
@@ -17,12 +17,6 @@ import { mapGetters } from "vuex";
 export default {
 	computed: {
 		...mapGetters(["menuCollapse", "browser", "app"])
-	},
-
-	methods: {
-		toHome() {
-			location.href = "https://cool-js.com/";
-		}
 	}
 };
 </script>

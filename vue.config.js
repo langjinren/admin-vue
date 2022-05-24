@@ -4,10 +4,10 @@ const isProduction = process.env.NODE_ENV === "production";
 // 代理列表
 const PROXY_LIST = {
 	"/dev": {
-		target: "http://127.0.0.1:8001",
+		target: "https://show.cool-admin.com",
 		changeOrigin: true,
 		pathRewrite: {
-			"^/dev": ""
+			"^/dev": "/api"
 		}
 	},
 

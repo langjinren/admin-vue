@@ -1,9 +1,6 @@
 <template>
 	<div class="page-login">
 		<div class="box">
-			<img class="logo" src="../../static/images/logo.png" alt="" />
-			<p class="desc">COOL ADMIN是一款快速开发后台权限管理系统</p>
-
 			<el-form ref="form" class="form" size="medium" :disabled="saving">
 				<el-form-item label="用户名">
 					<el-input
@@ -136,12 +133,6 @@ export default {
 		.logo {
 			height: 50px;
 			margin-bottom: 20px;
-		}
-		.desc {
-			color: #ccc;
-			font-size: 12px;
-			margin-bottom: 60px;
-			letter-spacing: 1px;
 		}
 		/deep/.el-form {
 			width: 300px;
