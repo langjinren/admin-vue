@@ -188,7 +188,6 @@ export default {
 				style.type = "text/css";
 				style.rel = "stylesheet";
 				style.id = "theme-style";
-
 				document.getElementsByTagName("head").item(0).appendChild(style);
 			}
 

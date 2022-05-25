@@ -84,7 +84,7 @@ import {
 
 import "@/assets/css/element-variables.scss";
 
-Vue.prototype.$ELEMENT = { size: 'mini' };
+Vue.prototype.$ELEMENT = { size: "mini" };
 
 Vue.use(Pagination);
 Vue.use(Dialog);
