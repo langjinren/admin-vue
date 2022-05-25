@@ -3,17 +3,18 @@
 		<el-row type="flex" align="middle">
 			<cl-refresh-btn></cl-refresh-btn>
 			<el-button
-				type="danger"
+        type="danger"
+        @click="onClear"
 			>
 				清空
 			</el-button>
 			<cl-filter>
 				<el-select
-					v-model="selects.status"
+					v-model="selects.video_type"
 					@change="
 						val => {
 							refresh({
-								status: val,
+								video_type: val,
 								page: 1
 							});
 						}
@@ -25,6 +26,27 @@
 				</el-select>
 			</cl-filter>
 			<cl-flex1></cl-flex1>
+			<cl-search-key
+				field="name"
+				placeholder="解说标题"
+				width="200"
+			></cl-search-key>
+		</el-row>
+		<el-row type="flex" align="middle" :gutter="20">
+			<cl-filter>
+				<el-input
+          v-model.trim="selects.phone"
+          placeholder="发布者手机号"
+          clearable
+				/>
+			</cl-filter>
+			<cl-filter>
+				<el-input
+          v-model.trim="selects.phone"
+          placeholder="发布者手机号"
+          clearable
+				/>
+			</cl-filter>
 			<cl-filter>
 				<el-input
           v-model.trim="selects.phone"
@@ -35,6 +57,7 @@
 			<cl-search-key
 				field="name"
 				placeholder="解说标题"
+				width="200"
 			></cl-search-key>
 		</el-row>
 
@@ -102,7 +125,13 @@ export default {
 	data() {
 		return {
 			selects: {
-				status: ""
+				phone: "",
+				commentary_title: "",
+				online_status: "",
+				source_id: "",
+				phone: "",
+				video_type: "",
+				movie_id: ""
 			},
 			table: {
 				on: {
@@ -113,11 +142,6 @@ export default {
 
 				props: {
 					columns: [
-						{
-							type: "selection",
-							align: "center",
-							width: 60
-						},
 						{
 							label: "姓名",
 							prop: "name",
@@ -132,20 +156,20 @@ export default {
 							"min-width": 120
 						},
 						{
-							label: "状态",
-							prop: "status",
+							label: "视频类型",
+							prop: "video_type",
 							align: "center",
 							"min-width": 120,
 							dict: [
 								{
-									label: "启用",
+									label: "机构发布",
 									value: 1,
 									type: "primary"
 								},
 								{
-									label: "禁用",
+									label: "个人发布",
 									value: 0,
-									type: "danger"
+									type: "success"
 								}
 							]
 						},
@@ -237,18 +261,18 @@ export default {
 							}
 						},
 						{
-							label: "状态",
-							prop: "status",
+							label: "视频类型",
+							prop: "video_type",
 							value: 1,
 							component: {
 								name: "el-radio-group",
 								options: [
 									{
-										label: "启用",
+										label: "机构发布",
 										value: 1
 									},
 									{
-										label: "禁用",
+										label: "个人发布",
 										value: 0
 									}
 								]
@@ -302,17 +326,17 @@ export default {
 							}
 						},
 						{
-							label: "状态",
-							prop: "status",
+							label: "视频类型",
+							prop: "video_type",
 							component: {
 								name: "el-radio-group",
 								options: [
 									{
-										label: "启用",
+										label: "机构发布",
 										value: 1
 									},
 									{
-										label: "禁用",
+										label: "个人发布",
 										value: 0
 									}
 								]
@@ -588,6 +612,17 @@ export default {
 			list.push({
 				val: ""
 			});
+		},
+
+		onClear() {
+			this.selects = Object.assign({}, {
+				commentary_title: "",
+				online_status: "",
+				source_id: "",
+				phone: "",
+				video_type: "",
+				movie_id: ""
+      }, {});
 		}
 	}
 };

@@ -2623,11 +2623,6 @@ cl-admin-crud@^1.6.15:
     array.prototype.flat "^1.2.4"
     clone-deep "^4.0.1"
 
-cl-admin-theme@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.npmjs.org/cl-admin-theme/-/cl-admin-theme-0.0.5.tgz#1b78cf81965893fb8d6aa10a6390f578808513d3"
-  integrity sha512-gefgxgTtZj/hT4BnjdeQza6SpNwsrxxe7CndVwq+ibOclhsI9QBhJQZBDTPEDLg8ebVqQt/ZKQcDMY3elLGaug==
-
 cl-admin@^1.5.3:
   version "1.5.3"
   resolved "https://registry.npmjs.org/cl-admin/-/cl-admin-1.5.3.tgz#180b0a58aa188b694aa86f73ce3dfe3ca84c80bc"

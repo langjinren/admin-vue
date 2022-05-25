@@ -25,7 +25,7 @@
 
 			<!-- 主题 -->
 			<li v-if="modules.theme">
-				<cl-theme />
+				<theme></theme>
 			</li>
 		</ul>
 
@@ -49,10 +49,15 @@
 <script>
 import { mapGetters } from "vuex";
 import { href } from "cl-admin/utils";
+import Theme from "./theme.vue";
 
 export default {
 	computed: {
 		...mapGetters(["userInfo", "menuCollapse", "app", "modules"])
+	},
+
+	components: {
+		Theme
 	},
 
 	methods: {

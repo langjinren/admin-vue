@@ -8,35 +8,175 @@ export const UserList = [
 		name: "刘一",
 		createTime: "2019年09月02日",
 		price: 75.99,
-		status: 1
+		video_type: 1
 	},
 	{
 		id: 2,
 		name: "陈二",
 		createTime: "2019年09月05日",
 		price: 242.1,
-		status: 1
+		video_type: 1
 	},
 	{
 		id: 3,
 		name: "张三",
 		createTime: "2019年09月12日",
 		price: 74.11,
-		status: 0
+		video_type: 0
+	},
+	{
+		id: 1,
+		name: "刘一",
+		createTime: "2019年09月02日",
+		price: 75.99,
+		video_type: 1
+	},
+	{
+		id: 2,
+		name: "陈二",
+		createTime: "2019年09月05日",
+		price: 242.1,
+		video_type: 1
+	},
+	{
+		id: 3,
+		name: "张三",
+		createTime: "2019年09月12日",
+		price: 74.11,
+		video_type: 0
+	},
+	{
+		id: 1,
+		name: "刘一",
+		createTime: "2019年09月02日",
+		price: 75.99,
+		video_type: 1
+	},
+	{
+		id: 2,
+		name: "陈二",
+		createTime: "2019年09月05日",
+		price: 242.1,
+		video_type: 1
+	},
+	{
+		id: 3,
+		name: "张三",
+		createTime: "2019年09月12日",
+		price: 74.11,
+		video_type: 0
 	},
 	{
 		id: 4,
 		name: "李四",
 		createTime: "2019年09月13日",
 		price: 276.64,
-		status: 0
+		video_type: 0
 	},
 	{
 		id: 5,
 		name: "王五",
 		createTime: "2019年09月18日",
 		price: 160.23,
-		status: 1
+		video_type: 1
+	},
+	{
+		id: 1,
+		name: "刘一",
+		createTime: "2019年09月02日",
+		price: 75.99,
+		video_type: 1
+	},
+	{
+		id: 2,
+		name: "陈二",
+		createTime: "2019年09月05日",
+		price: 242.1,
+		video_type: 1
+	},
+	{
+		id: 3,
+		name: "张三",
+		createTime: "2019年09月12日",
+		price: 74.11,
+		video_type: 0
+	},
+	{
+		id: 4,
+		name: "李四",
+		createTime: "2019年09月13日",
+		price: 276.64,
+		video_type: 0
+	},
+	{
+		id: 5,
+		name: "王五",
+		createTime: "2019年09月18日",
+		price: 160.23,
+		video_type: 1
+	},
+	{
+		id: 4,
+		name: "李四",
+		createTime: "2019年09月13日",
+		price: 276.64,
+		video_type: 0
+	},
+	{
+		id: 5,
+		name: "王五",
+		createTime: "2019年09月18日",
+		price: 160.23,
+		video_type: 1
+	},
+	{
+		id: 4,
+		name: "李四",
+		createTime: "2019年09月13日",
+		price: 276.64,
+		video_type: 0
+	},
+	{
+		id: 5,
+		name: "王五",
+		createTime: "2019年09月18日",
+		price: 160.23,
+		video_type: 1
+	},
+	{
+		id: 1,
+		name: "刘一",
+		createTime: "2019年09月02日",
+		price: 75.99,
+		video_type: 1
+	},
+	{
+		id: 2,
+		name: "陈二",
+		createTime: "2019年09月05日",
+		price: 242.1,
+		video_type: 1
+	},
+	{
+		id: 3,
+		name: "张三",
+		createTime: "2019年09月12日",
+		price: 74.11,
+		video_type: 0
+	},
+	{
+		id: 4,
+		name: "李四",
+		createTime: "2019年09月13日",
+		price: 276.64,
+		video_type: 0
+	},
+	{
+		id: 5,
+		name: "王五",
+		createTime: "2019年09月18日",
+		price: 160.23,
+		video_type: 1
 	}
 ];
 
@@ -51,8 +191,8 @@ export const TestService = {
 				return e.name.includes(p.name);
 			}
 
-			if (![undefined, null, ""].includes(p.status)) {
-				return e.status === p.status;
+			if (![undefined, null, ""].includes(p.video_type)) {
+				return e.video_type === p.video_type;
 			}
 
 			total++;
