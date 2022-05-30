@@ -1,13 +1,7 @@
 <template>
 	<cl-crud ref="crud" @load="onLoad">
-		<el-row type="flex" align="middle">
+		<el-row type="flex" align="middle" :gutter="10">
 			<cl-refresh-btn></cl-refresh-btn>
-			<el-button
-        type="danger"
-        @click="onClear"
-			>
-				清空
-			</el-button>
 			<cl-filter>
 				<el-select
 					v-model="selects.video_type"
@@ -26,39 +20,22 @@
 				</el-select>
 			</cl-filter>
 			<cl-flex1></cl-flex1>
-			<cl-search-key
-				field="name"
-				placeholder="解说标题"
-				width="200"
-			></cl-search-key>
-		</el-row>
-		<el-row type="flex" align="middle" :gutter="20">
-			<cl-filter>
-				<el-input
-          v-model.trim="selects.phone"
-          placeholder="发布者手机号"
-          clearable
-				/>
-			</cl-filter>
-			<cl-filter>
-				<el-input
-          v-model.trim="selects.phone"
-          placeholder="发布者手机号"
-          clearable
-				/>
-			</cl-filter>
-			<cl-filter>
-				<el-input
-          v-model.trim="selects.phone"
-          placeholder="发布者手机号"
-          clearable
-				/>
-			</cl-filter>
-			<cl-search-key
-				field="name"
-				placeholder="解说标题"
-				width="200"
-			></cl-search-key>
+			<cl-filter-group v-model="selects">
+				<cl-filter>
+					<el-input
+						placeholder="发布者手机号"
+						v-model.trim="selects.phone"
+						clearable
+					/>
+				</cl-filter>
+				<cl-filter>
+					<el-input
+						placeholder="解说标题"
+						clearable
+						v-model="selects.commentary_title"
+					/>
+				</cl-filter>
+			</cl-filter-group>
 		</el-row>
 
 		<el-row>
@@ -596,7 +573,7 @@ export default {
 				})
 				.done();
 
-			app.refresh();
+			app.refresh({ size: 10 });
 		},
 
 		refresh(params) {
@@ -612,17 +589,6 @@ export default {
 			list.push({
 				val: ""
 			});
-		},
-
-		onClear() {
-			this.selects = Object.assign({}, {
-				commentary_title: "",
-				online_status: "",
-				source_id: "",
-				phone: "",
-				video_type: "",
-				movie_id: ""
-      }, {});
 		}
 	}
 };
