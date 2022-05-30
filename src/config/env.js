@@ -31,7 +31,7 @@ export const iconfontUrl = ``;
 
 // 程序配置参数
 export const app = store.get("__app__") || {
-	name: "Pumpkin_Doras",
+	name: "Pumpkin Doras",
 
 	conf: {
 		showAMenu: true, // 是否显示一级菜单栏
@@ -62,7 +62,7 @@ export const menuList = [
 			{
 				icon: "icon-workbench",
 				name: "解说管理",
-				router: "/cms/commentary:id",
+				router: "/cms/commentary",
 				type: 0,
 				meta: {
 					keepAlive: 0,
@@ -75,7 +75,7 @@ export const menuList = [
 						name: "解说资源池",
 						router: "/cms/commentary/3",
 						type: 1,
-						viewPath: "views/cms/commentary/index.vue",
+						viewPath: "views/cms/commentary/se.vue",
 						// viewPath: "http://dev.doras.vcinema.cn:8111/movie_commentary/#/commentary?commentary_type=2&user_id=1&user_name=admin",
 						meta: {
 							keepAlive: 0,
@@ -166,75 +166,75 @@ export const menuList = [
 			}
 		]
 	},
-	{
-		// 菜单图标
-		icon: "icon-workbench",
-		// 菜单名称
-		name: "系统管理",
-		// 菜单路由
-		router: "/sys",
-		// 菜单类型，0：目录，1：菜单，2：权限
-		type: 0,
-		// 子菜单
-		children: [
-			{
-				icon: "icon-auth",
-				name: "权限管理",
-				type: 0,
-				children: [
-					{
-						icon: "icon-workbench",
-						name: "菜单列表",
-						router: "/sys/menu",
-						type: 1,
-						viewPath: "cool/modules/base/views/menu.vue"
-					},
-					{
-						icon: "icon-user",
-						name: "用户列表",
-						router: "/sys/user",
-						type: 1,
-						viewPath: "cool/modules/base/views/user.vue"
-					},
-					{
-						icon: "icon-common",
-						name: "角色列表",
-						router: "/sys/role",
-						type: 1,
-						viewPath: "cool/modules/base/views/role.vue"
-					}
-				]
-			},
-			{
-				icon: "icon-common",
-				name: "参数配置",
-				type: 0,
-				children: [
-					{
-						icon: "icon-menu",
-						name: "参数列表",
-						router: "/sys/param",
-						type: 1,
-						viewPath: "cool/modules/base/views/param.vue"
-					}
-				]
-			},
-			{
-				icon: "icon-rank",
-				name: "监控管理",
-				type: 0,
-				children: [
-					{
-						icon: "icon-log",
-						name: "请求日志",
-						router: "/sys/log",
-						type: 1,
-						viewPath: "cool/modules/base/views/log.vue"
-					}
-				]
-			}
-		]
-	},
+	// {
+	// 	// 菜单图标
+	// 	icon: "icon-workbench",
+	// 	// 菜单名称
+	// 	name: "系统管理",
+	// 	// 菜单路由
+	// 	router: "/sys",
+	// 	// 菜单类型，0：目录，1：菜单，2：权限
+	// 	type: 0,
+	// 	// 子菜单
+	// 	children: [
+	// 		{
+	// 			icon: "icon-auth",
+	// 			name: "权限管理",
+	// 			type: 0,
+	// 			children: [
+	// 				{
+	// 					icon: "icon-workbench",
+	// 					name: "菜单列表",
+	// 					router: "/sys/menu",
+	// 					type: 1,
+	// 					viewPath: "cool/modules/base/views/menu.vue"
+	// 				},
+	// 				{
+	// 					icon: "icon-user",
+	// 					name: "用户列表",
+	// 					router: "/sys/user",
+	// 					type: 1,
+	// 					viewPath: "cool/modules/base/views/user.vue"
+	// 				},
+	// 				{
+	// 					icon: "icon-common",
+	// 					name: "角色列表",
+	// 					router: "/sys/role",
+	// 					type: 1,
+	// 					viewPath: "cool/modules/base/views/role.vue"
+	// 				}
+	// 			]
+	// 		},
+	// 		{
+	// 			icon: "icon-common",
+	// 			name: "参数配置",
+	// 			type: 0,
+	// 			children: [
+	// 				{
+	// 					icon: "icon-menu",
+	// 					name: "参数列表",
+	// 					router: "/sys/param",
+	// 					type: 1,
+	// 					viewPath: "cool/modules/base/views/param.vue"
+	// 				}
+	// 			]
+	// 		},
+	// 		{
+	// 			icon: "icon-rank",
+	// 			name: "监控管理",
+	// 			type: 0,
+	// 			children: [
+	// 				{
+	// 					icon: "icon-log",
+	// 					name: "请求日志",
+	// 					router: "/sys/log",
+	// 					type: 1,
+	// 					viewPath: "cool/modules/base/views/log.vue"
+	// 				}
+	// 			]
+	// 		}
+	// 	]
+	// },
 	{
 		icon: "icon-task",
 		name: "demo",

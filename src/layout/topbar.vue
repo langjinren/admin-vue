@@ -24,9 +24,9 @@
 			</li>
 
 			<!-- 主题 -->
-			<!-- <li>
+			<li>
 				<theme></theme>
-			</li> -->
+			</li>
 		</ul>
 
 		<!-- 用户信息 -->
@@ -62,7 +62,6 @@ export default {
 
 	methods: {
 		onCommand(name) {
-			console.log('onCommand')
 			switch (name) {
 				case "my":
 					this.$router.push("/my/info");

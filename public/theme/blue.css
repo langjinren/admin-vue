@@ -2348,7 +2348,7 @@
 }
 .el-table thead {
   color: #909399;
-  font-weight: 500;
+  /* font-weight: 500; */
 }
 .el-table thead.is-group th {
   background: #f5f7fa;

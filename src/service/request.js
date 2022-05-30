@@ -42,6 +42,7 @@ axios.interceptors.request.use(
 
 		// 请求信息
 		if (isDev) {
+			console.log(config)
 			console.group(config.url);
 			console.log("method:", config.method);
 			console.table("data:", config.method == "get" ? config.params : config.data);
@@ -49,40 +50,40 @@ axios.interceptors.request.use(
 		}
 
 		// 验证 token
-		if (token) {
-			if (config.url.includes("refreshToken")) {
-				return config;
-			}
+		// if (token) {
+		// 	if (config.url.includes("refreshToken")) {
+		// 		return config;
+		// 	}
 
-			// 判断 token 是否过期
-			if (storage.isExpired("token")) {
-				// 判断 refreshToken 是否过期
-				if (storage.isExpired("refreshToken")) {
-					store.dispatch("userRemove");
-					return href("/login");
-				}
+		// 	// 判断 token 是否过期
+		// 	if (storage.isExpired("token")) {
+		// 		// 判断 refreshToken 是否过期
+		// 		if (storage.isExpired("refreshToken")) {
+		// 			store.dispatch("userRemove");
+		// 			return href("/login");
+		// 		}
 
-				// 是否在刷新中
-				if (!isRefreshing) {
-					isRefreshing = true;
+		// 		// 是否在刷新中
+		// 		if (!isRefreshing) {
+		// 			isRefreshing = true;
 
-					store.dispatch("refreshToken").then(token => {
-						requests.forEach(cb => cb(token));
-						requests = [];
-						isRefreshing = false;
-					});
-				}
+		// 			store.dispatch("refreshToken").then(token => {
+		// 				requests.forEach(cb => cb(token));
+		// 				requests = [];
+		// 				isRefreshing = false;
+		// 			});
+		// 		}
 
-				return new Promise(resolve => {
-					// 继续请求
-					requests.push(token => {
-						// 重新设置 token
-						config.headers["Authorization"] = token;
-						resolve(config);
-					});
-				});
-			}
-		}
+		// 		return new Promise(resolve => {
+		// 			// 继续请求
+		// 			requests.push(token => {
+		// 				// 重新设置 token
+		// 				config.headers["Authorization"] = token;
+		// 				resolve(config);
+		// 			});
+		// 		});
+		// 	}
+		// }
 
 		return config;
 	},
@@ -95,15 +96,13 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
 	res => {
 		NProgress.done();
-		const { code, data, message } = res.data;
-
-		if (!res.data) {
-			return res;
-		}
+		const { code, content, data, message } = res.data;
 
 		switch (code) {
 			case 1000:
 				return data;
+			case "000000":
+				return content;
 			default:
 				return Promise.reject(message);
 		}
@@ -111,44 +110,44 @@ axios.interceptors.response.use(
 	async error => {
 		NProgress.done();
 
-		if (error.response) {
-			const { status, config } = error.response;
+		// if (error.response) {
+		// 	const { status, config } = error.response;
 
-			switch (status) {
-				case 401:
-					await store.dispatch("userRemove");
-					href("/login");
-					break;
+		// 	switch (status) {
+		// 		case 401:
+		// 			await store.dispatch("userRemove");
+		// 			href("/login");
+		// 			break;
 
-				case 403:
-					if (isDev) {
-						Message.error(`${config.url} 无权限访问！！`);
-					} else {
-						href("/403");
-					}
-					break;
+		// 		case 403:
+		// 			if (isDev) {
+		// 				Message.error(`${config.url} 无权限访问！！`);
+		// 			} else {
+		// 				href("/403");
+		// 			}
+		// 			break;
 
-				case 404:
-					break;
+		// 		case 404:
+		// 			break;
 
-				case 500:
-					if (!isDev) {
-						href("/500");
-					}
-					break;
+		// 		case 500:
+		// 			if (!isDev) {
+		// 				href("/500");
+		// 			}
+		// 			break;
 
-				case 502:
-					if (isDev) {
-						Message.error(`${config.url} 服务异常！！`);
-					} else {
-						href("/502");
-					}
-					break;
+		// 		case 502:
+		// 			if (isDev) {
+		// 				Message.error(`${config.url} 服务异常！！`);
+		// 			} else {
+		// 				href("/502");
+		// 			}
+		// 			break;
 
-				default:
-					console.error(status, config.url);
-			}
-		}
+		// 		default:
+		// 			console.error(status, config.url);
+		// 	}
+		// }
 
 		return Promise.reject(error.message);
 	}

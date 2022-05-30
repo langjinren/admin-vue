@@ -39,3 +39,14 @@ input {
 		box-shadow: 0 0 0px 1000px white inset;
 	}
 }
+
+.el-table {
+	table {
+		.cell {
+			font-weight: normal;
+		}
+		th {
+			font-size: inherit;
+		}
+	}
+}

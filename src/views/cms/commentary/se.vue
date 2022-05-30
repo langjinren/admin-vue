@@ -31,7 +31,22 @@
 		</el-row>
 
 		<el-row>
-			<cl-table ref="table" v-bind="table.props" v-on="table.on"> </cl-table>
+			<cl-table ref="table" v-bind="table.props" v-on="table.on">
+				<template #column-title_page_url="{ scope }">
+					<el-image
+            v-if="scope.row.title_page_url != null && scope.row.title_page_url.length > 0"
+						:src="scope.row.title_page_url"
+					>
+					</el-image>
+					<span v-else>
+            无图片
+          </span>
+				</template>
+				<template #column-movie_id="{ scope }">
+					<p v-if="scope.row.movie_id">id:{{scope.row.movie_id}}</p>
+					<p v-if="scope.row.movie_name">片名:{{scope.row.movie_name}}</p>
+				</template>
+			</cl-table>
 		</el-row>
 
 		<el-row>
@@ -89,7 +104,7 @@
 import { TestService } from "./utils/service";
 
 export default {
-	name: "crud-demo",
+	name: "Test",
 
 	data() {
 		return {
@@ -100,7 +115,8 @@ export default {
 				source_id: "",
 				phone: "",
 				video_type: "",
-				movie_id: ""
+				movie_id: "",
+				commentary_type: 3
 			},
 			table: {
 				on: {
@@ -112,23 +128,48 @@ export default {
 				props: {
 					columns: [
 						{
-							label: "姓名",
-							prop: "name",
+							label: "#",
+							prop: "original_id",
 							align: "center",
-							"min-width": 120
+							width: 60
 						},
 						{
-							label: "存款",
-							prop: "price",
-							sortable: true,
+							label: "发布者手机号",
+							prop: "phone",
 							align: "center",
-							"min-width": 120
+							width: 110
+						},
+						{
+							label: "原始发布者昵称",
+							prop: "video_nickname",
+							align: "center"
+						},
+						{
+							label: "标题",
+							prop: "title",
+							align: "left",
+							"min-width": 150
+						},
+						{
+							label: "描述",
+							prop: "description",
+							align: "left",
+							"min-width": 200
+						},
+						{
+							label: "影片",
+							prop: "movie_id",
+							align: "left"
+						},
+						{
+							label: "封面",
+							prop: "title_page_url",
+							align: "center"
 						},
 						{
 							label: "视频类型",
 							prop: "video_type",
 							align: "center",
-							"min-width": 120,
 							dict: [
 								{
 									label: "机构发布",
@@ -144,9 +185,9 @@ export default {
 						},
 						{
 							label: "创建时间",
-							prop: "createTime",
+							prop: "create_time",
 							align: "center",
-							"min-width": 150
+							width: 140
 						},
 						{
 							label: "操作",
@@ -555,6 +596,9 @@ export default {
 		},
 
 		onLoad({ ctx, app }) {
+			// ctx.service(this.$service.log).done();
+			// app.refresh();
+
 			ctx.service(TestService)
 				.permission(() => {
 					return {
@@ -564,8 +608,24 @@ export default {
 					};
 				})
 				.done();
-
 			app.refresh({ size: 10 });
+
+			// ctx.service(this.$service.test).done();
+			// app.refresh(this.select);
+
+			// this.$service.test.getKeep(this.selects).then((a) => {
+			// 	ctx.service({
+			// 		page() {
+			// 			return Promise.resolve({
+			// 				list: a.data,
+			// 				pagination: {
+			// 					total: a.data_total
+			// 				}
+			// 			})
+			// 		}
+			// 	}).done();
+			// 	app.refresh(this.select);
+			// });
 		},
 
 		refresh(params) {
@@ -573,7 +633,7 @@ export default {
 		},
 
 		onUpsertCrudLoad({ ctx, app }) {
-			ctx.service(TestService).done();
+			ctx.service(this.$service.test).done();
 			app.refresh();
 		},
 

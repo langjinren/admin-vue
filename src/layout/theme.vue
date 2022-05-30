@@ -52,7 +52,7 @@
 					<slot></slot>
 				</div>
 
-				<div class="cl-theme__tips">
+				<!-- <div class="cl-theme__tips">
 					<el-alert
 						type="warning"
 						:closable="false"
@@ -69,7 +69,7 @@
 						@click="openDesc"
 						>修改说明</el-button
 					>
-				</div>
+				</div> -->
 			</div>
 		</el-drawer>
 
@@ -182,13 +182,16 @@ export default {
 			const theme = document.getElementById("theme-style");
 			const style = theme || document.createElement("link");
 
-			style.href = `${this.modules.theme.options.sourceUrl || "/theme/"}${name}.css`;
+			style.href = `${"/theme/"}${name}.css`;
 
 			if (!theme) {
 				style.type = "text/css";
 				style.rel = "stylesheet";
 				style.id = "theme-style";
-				document.getElementsByTagName("head").item(0).appendChild(style);
+				document
+					.getElementsByTagName("head")
+					.item(0)
+					.appendChild(style);
 			}
 
 			// 设置主题色和路径

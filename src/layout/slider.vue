@@ -1,7 +1,7 @@
 <template>
 	<div class="app-slider">
 		<div class="app-slider__logo">
-			<img src="@/assets/icon/logo/silder-simple.png" />
+			<img src="@/assets/icon/logo/favicon.png" />
 			<span v-if="!menuCollapse || browser.isMini">{{ app.name }}</span>
 		</div>
 

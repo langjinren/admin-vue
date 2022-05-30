@@ -3,7 +3,7 @@ import { storage, href } from "cl-admin/utils";
 // 用户信息
 let info = storage.get("userInfo") || {};
 // 授权标识
-let token = storage.get("token") || null;
+let token = storage.get("token") || "111";
 
 export default {
 	state: {
