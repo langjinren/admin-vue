@@ -26,8 +26,6 @@ export default {
 				}
 			}
 		},
-		// 客服聊天
-		"chat",
 		// 复制指令
 		"copy"
 	]

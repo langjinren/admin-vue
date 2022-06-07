@@ -6,23 +6,18 @@
 
 		<!-- 一级菜单 -->
 		<div class="app-topbar__menu" v-if="app.conf.showAMenu">
-			<cl-menu-topbar />
+			<menu-topbar />
 		</div>
 
 		<!-- 路由导航 -->
 		<div class="app-topbar__route-nav" v-if="app.conf.showRouteNav">
-			<cl-route-nav />
+			<route-nav />
 		</div>
 
 		<div class="flex1"></div>
 
 		<!-- 工具栏 -->
 		<ul class="app-topbar__tools">
-			<!-- 消息通知 -->
-			<li v-if="modules.chat">
-				<cl-chat-notice />
-			</li>
-
 			<!-- 主题 -->
 			<li>
 				<theme></theme>
@@ -50,6 +45,8 @@
 import { mapGetters } from "vuex";
 import { href } from "cl-admin/utils";
 import Theme from "./theme.vue";
+import RouteNav from "./route-nav/index.vue";
+import MenuTopbar from "./menu/topbar.vue";
 
 export default {
 	computed: {
@@ -57,7 +54,9 @@ export default {
 	},
 
 	components: {
-		Theme
+		Theme,
+		RouteNav,
+		MenuTopbar
 	},
 
 	methods: {

@@ -15,7 +15,7 @@
 
 <script>
 import { mapMutations } from "vuex";
-import { firstMenu } from "../../utils";
+import { firstMenu } from "@/utils";
 
 export default {
 	name: "cl-menu-topbar",

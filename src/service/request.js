@@ -29,6 +29,8 @@ let isRefreshing = false;
 axios.interceptors.request.use(
 	config => {
 		const token = store.getters.token || "";
+		config.headers['user_id'] = 1
+		config.headers['user_name'] = 'admin'
 
 		if (config.url) {
 			if (!ignore.token.some(e => config.url.includes(e))) {
@@ -41,12 +43,12 @@ axios.interceptors.request.use(
 		}
 
 		// 请求信息
-		if (isDev) {
-			console.group(config.url);
-			console.log("method:", config.method);
-			console.table("data:", config.method == "get" ? config.params : config.data);
-			console.groupEnd();
-		}
+		// if (isDev) {
+		// 	console.group(config.url);
+		// 	console.log("method:", config.method);
+		// 	console.table("data:", config.method == "get" ? config.params : config.data);
+		// 	console.groupEnd();
+		// }
 
 		// 验证 token
 		// if (token) {
@@ -95,51 +97,52 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
 	res => {
 		NProgress.done();
-		return res.data
+		return res.data;
 	},
 	async error => {
 		NProgress.done();
 
-		// if (error.response) {
-		// 	const { status, config } = error.response;
+		if (error.response) {
+			const { status, config } = error.response;
 
-		// 	switch (status) {
-		// 		case 401:
-		// 			await store.dispatch("userRemove");
-		// 			href("/login");
-		// 			break;
+			switch (status) {
+				// case 401:
+				// 	await store.dispatch("userRemove");
+				// 	href("/login");
+				// 	break;
 
-		// 		case 403:
-		// 			if (isDev) {
-		// 				Message.error(`${config.url} 无权限访问！！`);
-		// 			} else {
-		// 				href("/403");
-		// 			}
-		// 			break;
+				// case 403:
+				// 	if (isDev) {
+				// 		Message.error(`${config.url} 无权限访问！！`);
+				// 	} else {
+				// 		href("/403");
+				// 	}
+				// 	break;
 
-		// 		case 404:
-		// 			break;
+				case 404:
+					break;
 
-		// 		case 500:
-		// 			if (!isDev) {
-		// 				href("/500");
-		// 			}
-		// 			break;
+				case 500:
+					if (!isDev) {
+						href("/500");
+					}
+					break;
 
-		// 		case 502:
-		// 			if (isDev) {
-		// 				Message.error(`${config.url} 服务异常！！`);
-		// 			} else {
-		// 				href("/502");
-		// 			}
-		// 			break;
+				case 502:
+					if (isDev) {
+						Message.error(`${config.url} 服务异常！！`);
+					} else {
+						href("/502");
+					}
+					break;
 
-		// 		default:
-		// 			console.error(status, config.url);
-		// 	}
-		// }
-
-		return Promise.reject(error.message);
+				default:
+					console.error(status, config.url);
+			}
+		}
+		Message.error(`${error}`);
+		return ({})
+		// return Promise.reject(error.message);
 	}
 );
 

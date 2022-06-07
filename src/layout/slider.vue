@@ -6,17 +6,21 @@
 		</div>
 
 		<div class="app-slider__menu">
-			<cl-menu-slider></cl-menu-slider>
+			<menu-slider></menu-slider>
 		</div>
 	</div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import MenuSlider from "./menu/slider";
 
 export default {
 	computed: {
 		...mapGetters(["menuCollapse", "browser", "app"])
+	},
+	components: {
+		MenuSlider
 	}
 };
 </script>

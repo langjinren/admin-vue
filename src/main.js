@@ -11,25 +11,24 @@ import router from "@/router";
 // 缓存
 import store from "@/store";
 
-// mock
-import "@/mock";
-
 // echarts 可视图表
 Vue.component("v-chart", VueECharts);
 
 // 阻止显示生产模式的消息
 Vue.config.productionTip = false;
 
-Vue.directive('loadmore', {
-  inserted: (el, bind, vnode) => {
-    let SELECTWRAP = document.querySelector(`.el-select-dropdown.${bind.arg} .el-scrollbar .el-select-dropdown__wrap`);
-    SELECTWRAP.addEventListener('scroll', function () {
-      if ((SELECTWRAP.scrollHeight - SELECTWRAP.clientHeight) - SELECTWRAP.scrollTop <= 10) {
-        bind.value()
-      }
-    })
-  }
-})
+Vue.directive("loadmore", {
+	inserted: (el, bind, vnode) => {
+		let SELECTWRAP = document.querySelector(
+			`.el-select-dropdown.${bind.arg} .el-scrollbar .el-select-dropdown__wrap`
+		);
+		SELECTWRAP.addEventListener("scroll", function() {
+			if (SELECTWRAP.scrollHeight - SELECTWRAP.clientHeight - SELECTWRAP.scrollTop <= 10) {
+				bind.value();
+			}
+		});
+	}
+});
 
 // 配置
 bootstrap()

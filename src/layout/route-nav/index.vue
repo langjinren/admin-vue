@@ -7,9 +7,7 @@
 		<template v-else>
 			<el-breadcrumb>
 				<el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-				<el-breadcrumb-item v-for="(item, index) in list" :key="index">{{
-					(item.meta && item.meta.label) || item.name
-				}}</el-breadcrumb-item>
+				<el-breadcrumb-item v-for="(item, index) in list" :key="index">11</el-breadcrumb-item>
 			</el-breadcrumb>
 		</template>
 	</div>

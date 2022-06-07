@@ -7,25 +7,6 @@ export const routerMode = "history";
 // 开发模式
 export const isDev = process.env.NODE_ENV == "development";
 
-// Host
-export const host = "https://show.cool-admin.com";
-
-// Socket
-export const socketUrl = (isDev ? `${host}` : "") + "/socket";
-
-// 请求地址，本地会使用代理请求
-export const baseUrl = (function() {
-	let proxy = getUrlParam("proxy");
-
-	if (proxy) {
-		store.set("proxy", proxy);
-	} else {
-		proxy = store.get("proxy") || "dev";
-	}
-
-	return isDev ? `/${proxy}/admin` : `/api/admin`;
-})();
-
 // 阿里字体图标库 https://at.alicdn.com/t/**.css
 export const iconfontUrl = ``;
 

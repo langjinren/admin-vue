@@ -95,7 +95,8 @@ export default {
 		box-sizing: border-box;
 		flex: 1;
 		overflow: hidden;
-		margin-bottom: 10px;
+		padding: 10px 0;
+		background-color: #fff;
 	}
 
 	&__mask {
