@@ -32,6 +32,12 @@
 			<el-col :span="params.commentary_type == 2 ? 6 : 6">
 				<el-button type="success" @click="onSearch">搜索</el-button>
 				<el-button @click="onReset">重置</el-button>
+				<commentary-add
+					v-if="params.commentary_type == 3"
+					class="fr"
+					:user-name="user_name"
+					:on-success="toGetMovieCommentaryList"
+				/>
 				<el-button
 					class="fr"
 					icon="el-icon-refresh-right"
@@ -313,7 +319,6 @@ import {
 	getOfflineRecords
 } from "@/api/cms/commentary/commentary";
 import { getMovieList } from "@/api/cms/commentary/movie";
-import { Screen } from "@/mixins";
 
 import LangPagination from "@/components/Pagination.vue";
 import CommentaryDetail from "./components/Detail.vue";
@@ -326,7 +331,6 @@ export default {
 		CommentaryDetail,
 		CommentaryAdd
 	},
-	mixins: [Screen],
 	data() {
 		return {
 			loading: false,

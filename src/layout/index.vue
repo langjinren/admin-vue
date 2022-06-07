@@ -91,12 +91,11 @@ export default {
 	}
 
 	&__container {
-		width: 100%;
+		width: calc(100% - 10px);
 		box-sizing: border-box;
 		flex: 1;
 		overflow: hidden;
-		padding: 10px 0;
-		background-color: #fff;
+		margin-bottom: 10px;
 	}
 
 	&__mask {
@@ -111,10 +110,13 @@ export default {
 
 	&__view {
 		height: 100%;
-		width: 100%;
+		width: calc(100% - 10px);
 		box-sizing: border-box;
-		padding: 0 10px;
+		padding: 10px 10px 0 10px;
 		border-radius: 3px;
+		background-color: #fff;
+		margin-left: 10px;
+		margin-right: 10px;
 
 		& > div {
 			height: 100%;

@@ -24,7 +24,6 @@ export const baseUrl = (function() {
 	return isDev ? `/${proxy}/admin` : `/api/admin`;
 })();
 
-
 // 程序配置参数
 export const app = store.get("__app__") || {
 	name: "Pumpkin Doras",

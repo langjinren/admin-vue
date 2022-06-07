@@ -1,8 +1,8 @@
 import Vue from "vue";
-import VueECharts from "vue-echarts";
 import { bootstrap } from "cl-admin";
 import { app } from "@/config/env";
 import App from "./App.vue";
+import plugins from "@/components";
 import "./element";
 
 // 路由
@@ -11,8 +11,8 @@ import router from "@/router";
 // 缓存
 import store from "@/store";
 
-// echarts 可视图表
-Vue.component("v-chart", VueECharts);
+//注意必须在构建Vue实例之前就将需要的组件注册进去
+Vue.use(plugins);
 
 // 阻止显示生产模式的消息
 Vue.config.productionTip = false;
