@@ -75,7 +75,7 @@ export const menuList = [
 						name: "解说资源池",
 						router: "/cms/commentary/3",
 						type: 1,
-						viewPath: "views/cms/commentary/se.vue",
+						viewPath: "views/cms/commentary/index.vue",
 						// viewPath: "http://dev.doras.vcinema.cn:8111/movie_commentary/#/commentary?commentary_type=2&user_id=1&user_name=admin",
 						meta: {
 							keepAlive: 0,

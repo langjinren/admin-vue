@@ -42,7 +42,6 @@ axios.interceptors.request.use(
 
 		// 请求信息
 		if (isDev) {
-			console.log(config)
 			console.group(config.url);
 			console.log("method:", config.method);
 			console.table("data:", config.method == "get" ? config.params : config.data);
@@ -96,16 +95,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
 	res => {
 		NProgress.done();
-		const { code, content, data, message } = res.data;
-
-		switch (code) {
-			case 1000:
-				return data;
-			case "000000":
-				return content;
-			default:
-				return Promise.reject(message);
-		}
+		return res.data
 	},
 	async error => {
 		NProgress.done();

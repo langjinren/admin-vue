@@ -26,6 +26,7 @@
 		"socket.io-client": "2.3.1",
 		"store": "^2.0.12",
 		"uuid": "^8.3.2",
+		"video.js": "^7.19.2",
 		"vue": "^2.6.11",
 		"vue-codemirror": "^4.0.6",
 		"vue-cron": "^1.0.9",

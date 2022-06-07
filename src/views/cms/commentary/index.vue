@@ -1,587 +1,445 @@
 <template>
-	<cl-crud ref="crud" @load="onLoad">
-		<el-row type="flex" align="middle" :gutter="10">
-			<cl-refresh-btn></cl-refresh-btn>
-			<cl-filter>
-				<el-select
-					v-model="selects.video_type"
-					@change="
-						val => {
-							refresh({
-								video_type: val,
-								page: 1
-							});
-						}
-					"
-				>
-					<el-option value="" label="全部"></el-option>
-					<el-option :value="0" label="个人发布"></el-option>
-					<el-option :value="1" label="机构发布"></el-option>
-				</el-select>
-			</cl-filter>
-			<cl-flex1></cl-flex1>
-			<cl-filter-group v-model="selects">
-				<cl-filter>
-					<el-input placeholder="发布者手机号" v-model.trim="selects.phone" clearable />
-				</cl-filter>
-				<cl-filter>
-					<el-input placeholder="解说标题" clearable v-model="selects.commentary_title" />
-				</cl-filter>
-			</cl-filter-group>
-		</el-row>
+  <div>
+    <el-row :gutter="20" v-if="params.commentary_type!=2">
+      <el-col :span="6">
+        <el-input
+          v-model.trim="params.phone"
+          placeholder="发布者手机号"
+          prefix-icon="el-icon-search"
+          clearable
+          />
+      </el-col>
+      <el-col :span="6">
+        <el-input
+          v-model.trim="params.commentary_title"
+          placeholder="解说标题"
+          prefix-icon="el-icon-search"
+          clearable
+          />
+      </el-col>
+      <el-col :span="6">
+        <el-select
+          style="width: 100%"
+          clearable
+          v-model="params.video_type"
+          placeholder="视频类型">
+          <el-option label="全部" value="" />
+          <el-option label="个人发布" :value="0" />
+          <el-option label="机构发布" :value="1" />
+        </el-select>
+      </el-col>
+      <el-col :span="params.commentary_type==2?6:6">
+        <el-button type="success" @click="onSearch">搜索</el-button>
+        <el-button @click="onReset">重置</el-button>
+        <el-button class="fr" icon="el-icon-refresh-right" circle @click="toGetMovieCommentaryList" style="margin-right: 10px;"></el-button>
+      </el-col>
+    </el-row>
 
-		<el-row>
-			<cl-table ref="table" v-bind="table.props" v-on="table.on"> </cl-table>
-		</el-row>
+    <el-row :gutter="20" v-if="params.commentary_type==2">
+      <el-col :span="6">
+        <el-input
+          v-model.trim="params.phone"
+          placeholder="发布者手机号"
+          prefix-icon="el-icon-search"
+          clearable
+          />
+      </el-col>
+      <el-col :span="6">
+        <el-input
+          v-model.trim="params.commentary_title"
+          placeholder="解说标题"
+          prefix-icon="el-icon-search"
+          clearable
+          />
+      </el-col>
+      <el-col :span="6" v-if="params.commentary_type==2">
+        <el-select
+          v-model="movieSelect.movie"
+          value-key="movie_id"
+          placeholder="输入影片名称 选择影片进行搜索"
+          filterable
+          no-data-text="暂无匹配影片数据"
+          no-match-text="暂无匹配影片数据"
+          remote
+          reserve-keyword
+          :remote-method="toGetMovieList"
+          v-loadmore:[movieSelect.direction]="loadMoreMovie"
+          popper-class="index"
+          style="width: 100%; ">
+          <el-option
+            v-for="item in movieSelect.movieList"
+            :key="item.movie_id"
+            :label="item.movie_name"
+            :value="item">
+            <span style="float: left">{{ item.movie_name }}</span>
+            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.movie_id }}</span>
+          </el-option>
+          <div v-if="movieSelect.movieLoading" style="width: 100; text-align: center; color: #9f9f9f; font-size: 13px">加载中...</div>
+          <div v-if="movieSelect.loadAll" style="width: 100; text-align: center; color: #9f9f9f; font-size: 13px">加载完毕</div>
+        </el-select>
+      </el-col>
+    </el-row>
+    <el-row :gutter="20" style="margin-top: 10px; " v-if="params.commentary_type==2">
+      <el-col :span="6">
+        <el-select
+          style="width: 100%"
+          clearable
+          v-model="params.video_type"
+          placeholder="视频类型">
+          <el-option label="全部" value="" />
+          <el-option label="个人发布" :value="0" />
+          <el-option label="机构发布" :value="1" />
+        </el-select>
+      </el-col>
+      <el-col :span="6">
+        <el-select
+          style="width: 100%"
+          clearable
+          v-model="params.online_status"
+          placeholder="上线状态">
+          <el-option label="全部" value="" />
+          <el-option label="上线" :value="0" />
+          <el-option label="下线" :value="1" />
+        </el-select>
+      </el-col>
+      <el-col :span="12">
+        <el-button type="success" @click="onSearch">搜索</el-button>
+        <el-button @click="onReset">重置</el-button>
+        <el-button class="fr" icon="el-icon-refresh-right" circle @click="toGetMovieCommentaryList" style="margin-right: 10px;"></el-button>
+      </el-col>
+    </el-row>
 
-		<el-row>
-			<cl-pagination></cl-pagination>
-		</el-row>
+    <el-table
+      :data="tableData"
+      v-loading="loading"
+      border
+      element-loading-background="rgba(0, 0, 0, .1)"
+      style="width: 100%; margin-top: 10px; ">
+      <el-table-column prop="id" label="#" key="1" width="50" v-if="params.commentary_type==0"/>
+      <el-table-column prop="original_id" label="#" key="2" width="50" v-if="params.commentary_type!=0"/>
+      <el-table-column prop="phone" label="发布者手机号" width="120" key="4"/>
+      <el-table-column prop="video_nickname" label="原始发布者昵称" key="5" v-if="params.commentary_type!=0" />
+      <el-table-column prop="nickname" label="原始发布者昵称" key="55" v-if="params.commentary_type==0" />
 
-		<!-- 编辑、新增 -->
-		<cl-upsert ref="upsert" v-bind="upsert.props" v-on="upsert.on"> </cl-upsert>
+      <el-table-column prop="title" label="标题" key="6" v-if="params.commentary_type!=0" />
+      <el-table-column prop="description" label="描述" key="7" v-if="params.commentary_type!=0" min-width="220" />
+      
+      <el-table-column prop="video_title" label="原始标题" key="666" v-if="params.commentary_type==0" />
+      <el-table-column prop="video_description" label="原始描述" key="777" v-if="params.commentary_type==0" min-width="220" />
 
-		<!-- 自定义表单 -->
-		<cl-form ref="form">
-			<!-- 动态增减表单验证 -->
-			<template #slot-validate="{ scope }">
-				<el-form-item
-					v-for="(item, index) in scope.vads"
-					:key="index"
-					:prop="'vads.' + index + '.val'"
-					:rules="{ required: true, message: '请输入' }"
-				>
-					<el-input v-model="item.val"></el-input>
-				</el-form-item>
+      <el-table-column prop="movie_id" label="影片" key="77" min-width="90"  v-if="params.commentary_type!=0">
+        <template slot-scope="scope">
+          <p v-if="scope.row.movie_id" class="p0 m0">id: {{scope.row.movie_id}}</p>
+          <p v-if="scope.row.movie_name" class="p0 m0">片名: 《{{scope.row.movie_name}}》</p>
+        </template>
+      </el-table-column>
+      <el-table-column prop="video_type" label="发布类型" key="8" width="90">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.video_type == 1 ? 'warning' :'primary'">
+            {{scope.row.video_type == 1 ? '机构发布' : '个人发布' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="online_status" label="上线类型" v-if="params.commentary_type==2" key="9">
+        <template slot-scope="scope">
+          <el-button
+            :type="scope.row.online_status == 0 ? 'success' :'primary'"
+            style="padding: 3px 6px;"
+            @click="toAudit(scope.row)">
+            {{scope.row.online_status == 0 ? '上线' : '下线' }}
+          </el-button>
+          <span v-if="scope.row.online_status == 1" style="margin-left: 5px; cursor: pointer;" @click="toGetOfflineList(scope.row)">查看<i class="el-icon-d-arrow-right"></i></span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="title_page_url" label="封面" key="10" width="110">
+        <template slot-scope="scope">
+          <el-image
+            v-if="scope.row.title_page_url != null && scope.row.title_page_url.length > 0"
+            :src="scope.row.title_page_url"
+            @click="previewImgMore(0, [scope.row.title_page_url])"
+            fit="contain" />
+          <span v-else>
+            无图片
+          </span>
+        </template>
+      </el-table-column>
+      </el-table-column>
+      <el-table-column prop="create_time" label="创建时间" key="11" />
+      <el-table-column label="操作" align="center" :width="params.commentary_type==0?280:130" key="12">
+        <template slot-scope="scope">
+          <el-button v-if="params.commentary_type==0" type="primary" @click="jumpOtherPage('video', scope.row.source_id)">视频结果</el-button>
+          <el-button v-if="params.commentary_type==0" type="primary" style="margin: 0 5px 0 5px; " @click="jumpOtherPage('audio', scope.row.source_id)">音频结果</el-button>
+          <commentary-detail
+            :data="scope.row"
+            :user-name="user_name"
+            :commentary-type="params.commentary_type"
+            :on-success="toGetMovieCommentaryList" />
+        </template>
+      </el-table-column>
+    </el-table>
 
-				<el-button @click="addVad(scope.vads)">添加行</el-button>
-			</template>
+    <el-dialog
+      title="下线操作记录"
+      :visible.sync="visibleDialog"
+    >
+      <el-table :data="offlineList" border>
+        <el-table-column type="index" label="#" />
+        <el-table-column prop="operate_reason" label="原因" />
+        <el-table-column prop="operate_user" label="操作人" width="100" />
+        <el-table-column prop="create_time" label="创建时间" width="150" />
+      </el-table>
+    </el-dialog>
 
-			<!-- 内嵌crud -->
-			<template #slot-crud>
-				<cl-crud @load="onUpsertCrudLoad">
-					<cl-table
-						:props="{
-							'max-height': '300px'
-						}"
-						:columns="[
-							{
-								label: '姓名',
-								prop: 'name'
-							},
-							{
-								label: '存款',
-								prop: 'price'
-							},
-							{
-								label: '创建时间',
-								prop: 'createTime'
-							}
-						]"
-					></cl-table>
-				</cl-crud>
-			</template>
-		</cl-form>
-	</cl-crud>
+    <lang-pagination
+      :total="total"
+      :pageSize="params.page_size"
+      :currentPage="params.page_number"
+      :sizeChange="sizeChange"
+      :currentChange="currentChange"
+      :pagination="toGetMovieCommentaryList"
+    />
+  </div>
 </template>
 
 <script>
-import { TestService } from "./utils/service";
+import { getMovieCommentaryList, updateMovieCommentary, getOfflineRecords } from "@/api/cms/commentary/commentary";
+import { getMovieList } from "@/api/cms/commentary/movie"
+
+import LangPagination from '@/components/Pagination.vue'
+import CommentaryDetail from './components/Detail.vue'
+import CommentaryAdd from './components/Add.vue'
 
 export default {
-	name: "crud-demo",
-
-	data() {
-		return {
-			selects: {
-				phone: "",
-				commentary_title: "",
-				online_status: "",
-				source_id: "",
-				phone: "",
-				video_type: "",
-				movie_id: ""
-			},
-			table: {
-				on: {
-					"row-click": row => {
-						console.log("行点击", row);
-					}
-				},
-
-				props: {
-					columns: [
-						{
-							label: "姓名",
-							prop: "name",
-							align: "center",
-							"min-width": 120
-						},
-						{
-							label: "存款",
-							prop: "price",
-							sortable: true,
-							align: "center",
-							"min-width": 120
-						},
-						{
-							label: "视频类型",
-							prop: "video_type",
-							align: "center",
-							"min-width": 120,
-							dict: [
-								{
-									label: "机构发布",
-									value: 1,
-									type: "primary"
-								},
-								{
-									label: "个人发布",
-									value: 0,
-									type: "success"
-								}
-							]
-						},
-						{
-							label: "创建时间",
-							prop: "createTime",
-							align: "center",
-							"min-width": 150
-						},
-						{
-							label: "操作",
-							type: "op",
-							align: "center",
-							buttons: [
-								"edit",
-								"delete",
-								({ h, scope }) => {
-									return h(
-										"el-button",
-										{
-											props: {
-												type: "text",
-												size: "mini"
-											},
-											on: {
-												click: () => {
-													this.$refs["crud"].rowAppend({
-														name: scope.row.name
-													});
-												}
-											}
-										},
-										"追加"
-									);
-								}
-							]
-						}
-					]
-				}
-			},
-			upsert: {
-				on: {
-					open() {
-						console.log("cl-upsert 打开");
-					},
-
-					close() {
-						console.log("cl-upsert 关闭");
-					}
-				},
-				props: {
-					onOpen: (isEdit, data, { done, submit, close }) => {
-						console.log("cl-upsert 打开钩子", isEdit, data);
-					},
-
-					onClose(done) {
-						console.log("cl-upsert 关闭钩子");
-						done();
-					},
-
-					onInfo(data, { next, done, close }) {
-						console.log("cl-upsert 详情钩子", data);
-						done(data);
-					},
-
-					onSubmit(isEdit, data, { next, close, done }) {
-						console.log("cl-upsert 提交钩子", `是否编辑 ${isEdit}`, data);
-						next(data);
-					},
-
-					items: [
-						{
-							label: "姓名",
-							prop: "name",
-							component: {
-								name: "el-input"
-							},
-							rules: {
-								required: true,
-								message: "姓名不能为空"
-							}
-						},
-						{
-							label: "存款",
-							prop: "price",
-							value: 0,
-							component: {
-								name: "el-input-number"
-							}
-						},
-						{
-							label: "视频类型",
-							prop: "video_type",
-							value: 1,
-							component: {
-								name: "el-radio-group",
-								options: [
-									{
-										label: "机构发布",
-										value: 1
-									},
-									{
-										label: "个人发布",
-										value: 0
-									}
-								]
-							},
-							rules: {
-								required: true,
-								message: "状态不能为空"
-							}
-						}
-					]
-				}
-			},
-			advSearch: {
-				on: {
-					open(data) {
-						console.log("adv-search 打开", data);
-					},
-					close() {
-						console.log("adv-search 关闭");
-					},
-					reset() {
-						console.log("adv-search 重置");
-					},
-					clear() {
-						console.log("adv-search 清空");
-					}
-				},
-				props: {
-					onOpen(data, { next }) {
-						console.log("adv-search 打开钩子", data);
-						next();
-					},
-					onClose(done) {
-						console.log("adv-search 关闭钩子");
-						done();
-					},
-					onSearch(data, { next, close }) {
-						console.log("adv-search 搜索钩子", data);
-						next(data);
-					},
-					opList: ["search", "reset", "clear", "close"],
-					items: [
-						{
-							label: "昵称",
-							prop: "name",
-							component: {
-								name: "el-input",
-								attrs: {
-									placeholder: "搜索昵称"
-								}
-							}
-						},
-						{
-							label: "视频类型",
-							prop: "video_type",
-							component: {
-								name: "el-radio-group",
-								options: [
-									{
-										label: "机构发布",
-										value: 1
-									},
-									{
-										label: "个人发布",
-										value: 0
-									}
-								]
-							}
-						}
-					]
-				}
-			}
-		};
+  name: 'MovieCommentary',
+  components: {
+    LangPagination,
+    CommentaryDetail,
+    CommentaryAdd
+  },
+  data() {
+    return {
+      loading: false,
+      total: 0,
+      tableData: [],
+      params: {
+        page_number: 1,
+        page_size: 10,
+        commentary_title: '',
+        online_status: '',
+        source_id: '',
+        phone: '',
+        video_type: '',
+        movie_id: '',
+				commentary_type: 0
+      },
+      selectAll: false,
+      movieSelect: {
+        movie: '',
+        movie_id: '',
+        movie_name: '',
+        page_number: 1,
+        page_size: 10,
+        movieList: [],
+        movieLoading: false,
+        direction: 'index',
+        loadAll: false
+      },
+      visibleDialog: false,
+      offlineList: [],
+			user_name: 'test'
+    }
+  },
+  methods: {
+    previewImgMore(index, imgList) {
+      this.$hevueImgPreview({
+        multiple: true,
+        imgList,
+        nowImgIndex: index,
+        keyboard: true
+      });
+    },
+    jumpOtherPage(type, source_id) {
+      window.open(`${process.env.VUE_APP_PAGE}/plan_media/to_media_${type}_result?sourceId=${source_id}`)
+    },
+    switchSelectAll(status) {
+      let self = this;
+      let arr = []
+      self.tableData.map((item) => {
+        if (item.audit_status == 0) {
+          if (status) {
+            self.$set(item, 'select', true)
+            arr.push(item)
+            return
+          } else {
+            self.$set(item, 'select', false)
+            arr.push(item)
+          }
+        }
+      })
+    },
+    onSearch() {
+      this.$set(this.params ,'page', 0)
+      this.toGetMovieCommentaryList()
+    },
+    onReset() {
+      this.params = Object.assign({}, {
+        page_number: 1,
+        page_size: 10,
+        commentary_title: '',
+        online_status: '',
+        source_id: '',
+        phone: '',
+        video_type: '',
+        movie_id: ''
+      }, {});
+      this.$set(this.movieSelect, 'movie', '')
+      this.$set(this.movieSelect, 'movieList', [])
+			this.toGetMovieCommentaryList()
+    },
+    sizeChange(pageSize) {
+			this.$set(this.params, 'page_size', pageSize)
+			this.toGetMovieCommentaryList()
+    },
+		currentChange(currentChange) {
+			this.$set(this.params, 'page_number', currentChange)
+			this.toGetMovieCommentaryList()
+    },
+    toGetMovieCommentaryList() {
+			let commentary_type = this.$route.path.substring(1).split('/')[2] || 0
+      this.$set(this.params, 'commentary_type', commentary_type)
+      let { movie: { movie_id = '' } = {} } = this.movieSelect
+      getMovieCommentaryList({
+        ...this.params,
+        movie_id
+      }).then((res) => {
+				console.log(res)
+        if (res.code == 0) {
+          this.tableData = res.content.data
+          this.total = res.content.data_total
+        } else {
+          this.tableData = []
+          this.total = 0
+        }
+      })
+    },
+    toAudit({
+      commentary_id,
+      online_status
+    }) {
+      let self = this;
+      if (online_status==0) {
+        self.$prompt('请输入下线原因', '请确认是否下线', {
+          confirmButtonText: '确认下线',
+          cancelButtonText: '取消',
+          inputPattern: /\S/,
+          inputErrorMessage: '请输入下线原因'
+        })
+        .then(({ value }) => {
+          updateMovieCommentary({
+            offline_reason: value,
+            online_status: 1,
+            commentary_id: commentary_id
+          }).then((res) => {
+            if (res.code == '000000') {
+              this.$message.success('操作成功')
+              this.toGetMovieCommentaryList()
+            } else {
+              this.$message.error(res.message)
+            }
+          })
+        })
+      } else {
+        self.$msgbox({
+          title: '请确认是否上线',
+          showCancelButton: true,
+          confirmButtonText: '确认上线',
+          cancelButtonText: '取消'
+        }).then(action => {
+          updateMovieCommentary({
+            offline_reason: '',
+            online_status: 0,
+            commentary_id: commentary_id,
+            user_name: this.user_name
+          }).then((res) => {
+            if (res.code == '000000') {
+              this.$message.success('操作成功')
+              this.toGetMovieCommentaryList()
+            } else {
+              this.$message.error(res.message)
+            }
+          })
+        });
+      }
+    },
+    loadMoreMovie() {
+      let { movieLoading, loadAll } = this.movieSelect
+      if (movieLoading || loadAll) {
+        return
+      }
+      this.toGetMovieList('', false)
+    },
+    toGetMovieList(movie_name, flag) {
+      if(flag == undefined) {
+        this.$set(this.movieSelect, 'movie_name', movie_name)
+      }
+      if (this.movieLoading) {
+        return
+      }
+      if(movie_name!= '') {
+        this.$set(this.movieSelect, 'page_number', 1)
+        this.$set(this.movieSelect, 'movieList', [])
+        this.$set(this.movieSelect, 'loadAll', false)
+      }
+      if (this.movieSelect.movie_name == '') {
+        this.$set(this.movieSelect, 'page_number', 1)
+        this.$set(this.movieSelect, 'movieList', [])
+        this.$set(this.movieSelect, 'loadAll', false)
+        return
+      }
+      this.$set(this.movieSelect, 'movieLoading', true)
+      getMovieList({
+        ...this.movieSelect
+      }).then((res) => {
+        let { page_number, movieList, page_size } = this.movieSelect
+        if (res.total_size > 0) {
+          if (page_number==1) {
+            this.$set(this.movieSelect, 'movieList', res.movie_list)
+          } else {
+            let newDate = [...movieList, ...res.movie_list]
+            let map = new Map();
+            for(let item of newDate){
+              if(!map.has(item.movie_id)){
+                map.set(item.movie_id, item)
+              }
+            }
+            this.$set(this.movieSelect, 'movieList', [...map.values()])
+          }
+          if (res.movie_list.length < page_size) {
+            this.$set(this.movieSelect, 'loadAll', true)
+          }
+          this.$set(this.movieSelect, 'page_number', page_number+1)
+        }
+        this.$set(this.movieSelect, 'movieLoading', false)
+      })
+    },
+    toGetOfflineList({commentary_id}) {
+      getOfflineRecords({
+        commentary_id
+      }).then((res) => {
+        if (res.code == 0) {
+          this.offlineList = res.content
+          this.visibleDialog = true
+        }
+      })
+    }
+  },
+	mounted() {
+		this.toGetMovieCommentaryList()
 	},
-
-	methods: {
-		openForm() {
-			this.$refs["form"].open({
-				title: "自定义表单",
-				width: "1000px",
-				props: {
-					"label-width": "150px"
-				},
-				on: {
-					open(data, { close, submit, done }) {
-						console.log("cl-form 打开钩子", data);
-					},
-
-					close(done) {
-						console.log("cl-form 关闭钩子");
-						done();
-					},
-
-					submit: (data, { close, done, next }) => {
-						console.log("cl-form 提交钩子", data);
-
-						setTimeout(() => {
-							done();
-							this.$message.success("提交成功");
-						}, 1500);
-					}
-				},
-				form: {
-					qs: [1]
-				},
-				items: [
-					{
-						props: {
-							"label-width": "0px"
-						},
-						component: ({ h }) => {
-							return h(
-								"el-divider",
-								{
-									props: {
-										"content-position": "left"
-									}
-								},
-								"测试内嵌CRUD"
-							);
-						}
-					},
-					{
-						props: {
-							"label-width": "0px"
-						},
-						component: {
-							name: "slot-crud"
-						}
-					},
-					{
-						props: {
-							"label-width": "0px"
-						},
-						component: ({ h }) => {
-							return h(
-								"el-divider",
-								{
-									props: {
-										"content-position": "left"
-									}
-								},
-								"测试验证规则"
-							);
-						}
-					},
-					{
-						prop: "vads",
-						value: [],
-						label: "动态增减表单验证",
-						component: {
-							name: "slot-validate"
-						}
-					},
-					{
-						props: {
-							"label-width": "0px"
-						},
-						component: ({ h }) => {
-							return h(
-								"el-divider",
-								{
-									props: {
-										"content-position": "left"
-									}
-								},
-								"测试显隐"
-							);
-						}
-					},
-					{
-						label: "奇术",
-						prop: "qs",
-						value: [],
-						component: {
-							name: "el-select",
-							attrs: {
-								placeholder: "请选择奇术"
-							},
-							props: {
-								multiple: true
-							},
-							options: [
-								{
-									label: "烟水还魂",
-									value: 1
-								},
-								{
-									label: "雨恨云愁",
-									value: 2
-								}
-							]
-						}
-					},
-					{
-						label: "技能",
-						prop: "jn",
-						value: 1,
-						component: {
-							name: "el-select",
-							attrs: {
-								placeholder: "请选择技能"
-							},
-							options: [
-								{
-									label: "飞羽箭",
-									value: 1
-								},
-								{
-									label: "落星式",
-									value: 2
-								}
-							]
-						}
-					},
-					{
-						label: "五行",
-						prop: "wx",
-						value: 0,
-						hidden: ({ scope }) => {
-							return scope.jn == 1;
-						},
-						component: {
-							name: "el-radio-group",
-							options: [
-								{
-									label: "水",
-									value: 0
-								},
-								{
-									label: "火",
-									value: 1
-								},
-								{
-									label: "雷",
-									value: 2
-								},
-								{
-									label: "风",
-									value: 3
-								},
-								{
-									label: "土",
-									value: 4
-								}
-							]
-						}
-					},
-					{
-						label: "雨润",
-						prop: "s1",
-						hidden: ({ scope }) => {
-							return scope.wx != 0;
-						},
-						component: ({ h }) => {
-							return h("p", "以甘甜雨露的滋润使人精力充沛");
-						}
-					},
-					{
-						label: "风雪冰天",
-						prop: "s2",
-						hidden: ({ scope }) => {
-							return scope.wx != 0;
-						},
-						component: ({ h }) => {
-							return h("p", "召唤漫天风雪，对敌方造成巨大的杀伤力");
-						}
-					},
-					{
-						label: "三昧真火",
-						prop: "h",
-						hidden: ({ scope }) => {
-							return scope.wx != 1;
-						},
-						component: ({ h }) => {
-							return h("p", "召唤三昧真火焚烧敌方的仙术");
-						}
-					},
-					{
-						label: "惊雷闪",
-						prop: "l",
-						hidden: ({ scope }) => {
-							return scope.wx != 2;
-						},
-						component: ({ h }) => {
-							return h("p", "召唤惊雷无数，对敌方全体进行攻击，是十分强力的仙术");
-						}
-					},
-					{
-						label: "如沐春风",
-						prop: "f",
-						hidden: ({ scope }) => {
-							return scope.wx != 3;
-						},
-						component: ({ h }) => {
-							return h("p", "温暖柔和的复苏春风，使人回复活力");
-						}
-					},
-					{
-						label: "艮山壁障",
-						prop: "t",
-						hidden: ({ scope }) => {
-							return scope.wx != 4;
-						},
-						component: ({ h }) => {
-							return h("p", "以艮山之灵形成一道壁障，受此壁障守护者刀枪不入");
-						}
-					}
-				]
-			});
-		},
-
-		onLoad({ ctx, app }) {
-			ctx.service(TestService)
-				.permission(() => {
-					return {
-						add: true,
-						update: true,
-						delete: true
-					};
-				})
-				.done();
-
-			app.refresh({ size: 10 });
-		},
-
-		refresh(params) {
-			this.$refs["crud"].refresh(params);
-		},
-
-		onUpsertCrudLoad({ ctx, app }) {
-			ctx.service(TestService).done();
-			app.refresh();
-		},
-
-		addVad(list) {
-			list.push({
-				val: ""
-			});
+	watch: {
+		'$route'(to, from) {
+			this.toGetMovieCommentaryList()
 		}
 	}
-};
+}
 </script>
