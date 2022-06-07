@@ -553,7 +553,7 @@ export default {
 	},
 	watch: {
 		$route(to, from) {
-			if ((to.path).indexOf('/cms/commentary') >= 0) {
+			if (to.path.indexOf("/cms/commentary") >= 0) {
 				this.onSearch();
 			}
 		}

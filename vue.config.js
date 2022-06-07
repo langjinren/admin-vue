@@ -44,17 +44,10 @@ module.exports = {
 			warnings: false,
 			errors: true
 		},
-		disableHostCheck: true,
-		proxy: PROXY_LIST
+		disableHostCheck: true
 	},
 
 	chainWebpack: config => {
-		// 设置环境变量
-		config.plugin("define").tap(args => {
-			args[0]["process.env"].PROXY_LIST = JSON.stringify(PROXY_LIST);
-			return args;
-		});
-
 		// 设置 svg
 		config.module.rule("svg").uses.clear();
 

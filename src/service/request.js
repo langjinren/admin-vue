@@ -28,14 +28,14 @@ let isRefreshing = false;
 // Request
 axios.interceptors.request.use(
 	config => {
-		const token = store.getters.token || "";
-		config.headers['user_id'] = 1
-		config.headers['user_name'] = 'admin'
+		// const token = store.getters.token || "";
+		config.headers["user_id"] = 1;
+		config.headers["user_name"] = "admin";
 
 		if (config.url) {
-			if (!ignore.token.some(e => config.url.includes(e))) {
-				config.headers["Authorization"] = token;
-			}
+			// if (!ignore.token.some(e => config.url.includes(e))) {
+			// 	config.headers["Authorization"] = token;
+			// }
 
 			if (!ignore.NProgress.some(e => config.url.includes(e))) {
 				NProgress.start();
@@ -141,7 +141,7 @@ axios.interceptors.response.use(
 			}
 		}
 		Message.error(`${error}`);
-		return ({})
+		return {};
 		// return Promise.reject(error.message);
 	}
 );
