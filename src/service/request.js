@@ -7,7 +7,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 
 axios.defaults.timeout = 30000;
-axios.defaults.withCredentials = true;
+// axios.defaults.withCredentials = true;
 
 NProgress.configure({
 	showSpinner: false
@@ -139,10 +139,11 @@ axios.interceptors.response.use(
 				default:
 					console.error(status, config.url);
 			}
+		} else {
+			Message.error(`${error}`);
+			return {};
+			// return Promise.reject(error.message);
 		}
-		Message.error(`${error}`);
-		return {};
-		// return Promise.reject(error.message);
 	}
 );
 

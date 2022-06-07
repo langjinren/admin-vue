@@ -1,25 +1,6 @@
 const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const isProduction = process.env.NODE_ENV === "production";
 
-// 代理列表
-const PROXY_LIST = {
-	"/dev": {
-		target: "https://show.cool-admin.com",
-		changeOrigin: true,
-		pathRewrite: {
-			"^/dev": "/api"
-		}
-	},
-
-	"/pro": {
-		target: "https://show.cool-admin.com",
-		changeOrigin: true,
-		pathRewrite: {
-			"^/pro": "/api"
-		}
-	}
-};
-
 module.exports = {
 	publicPath: "/",
 	lintOnSave: true,

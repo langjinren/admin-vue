@@ -148,7 +148,7 @@
 			:data="tableData"
 			v-loading="loading"
 			border
-			height="90%"
+			height="80%"
 			element-loading-background="rgba(0, 0, 0, .1)"
 			style="width: 100%; margin-top: 10px; "
 		>
@@ -219,7 +219,7 @@
 			</el-table-column>
 			<el-table-column prop="video_type" label="发布类型" key="8" width="90">
 				<template slot-scope="scope">
-					<el-tag effect="dark" :type="scope.row.video_type == 1 ? 'warning' : 'primary'">
+					<el-tag :type="scope.row.video_type == 1 ? 'warning' : 'primary'">
 						{{ scope.row.video_type == 1 ? "机构发布" : "个人发布" }}
 					</el-tag>
 				</template>
@@ -395,7 +395,7 @@ export default {
 			});
 		},
 		onSearch() {
-			this.$set(this.params, "page", 0);
+			this.$set(this.params, "page_number", 1);
 			this.tableData = [];
 			this.toGetMovieCommentaryList();
 		},

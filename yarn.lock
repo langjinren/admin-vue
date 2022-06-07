@@ -4845,6 +4845,11 @@ he@1.2.x, he@^1.1.0, he@^1.1.1:
   resolved "https://registry.npmjs.org/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
+hevue-img-preview@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/hevue-img-preview/-/hevue-img-preview-5.0.3.tgz#0f684ba303c95d5d28ab4a358b548a46524d6742"
+  integrity sha512-JzTudYDM/ECxRd0we+DxZ6/7VoM9GKBCSp2CCMFzI+ha1MuKIq35P96b4V/Funvr5cTzsdiwHf8n35GSwwnJUA==
+
 hex-color-regex@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npmjs.org/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"

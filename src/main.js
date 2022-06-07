@@ -17,19 +17,6 @@ Vue.use(plugins);
 // 阻止显示生产模式的消息
 Vue.config.productionTip = false;
 
-Vue.directive("loadmore", {
-	inserted: (el, bind, vnode) => {
-		let SELECTWRAP = document.querySelector(
-			`.el-select-dropdown.${bind.arg} .el-scrollbar .el-select-dropdown__wrap`
-		);
-		SELECTWRAP.addEventListener("scroll", function() {
-			if (SELECTWRAP.scrollHeight - SELECTWRAP.clientHeight - SELECTWRAP.scrollTop <= 10) {
-				bind.value();
-			}
-		});
-	}
-});
-
 // 配置
 bootstrap()
 	.then(() => {

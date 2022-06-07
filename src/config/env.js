@@ -10,19 +10,9 @@ export const isDev = process.env.NODE_ENV == "development";
 // 阿里字体图标库 https://at.alicdn.com/t/**.css
 export const iconfontUrl = "";
 
-// export const baseUrl = "";
+export const baseUrl = "";
 
 export const host = "";
-
-export const baseUrl = (function() {
-	let proxy = getUrlParam("proxy");
-	if (proxy) {
-		store.set("proxy", proxy);
-	} else {
-		proxy = store.get("proxy") || "dev";
-	}
-	return isDev ? `/${proxy}/admin` : `/api/admin`;
-})();
 
 // 程序配置参数
 export const app = store.get("__app__") || {
