@@ -63,7 +63,7 @@ import {
 	// Header,
 	// Aside,
 	// Main,
-	// Footer,
+	Footer,
 	// Timeline,
 	// TimelineItem,
 	Link,
@@ -149,7 +149,7 @@ Vue.use(Cascader);
 // Vue.use(Header);
 // Vue.use(Aside);
 // Vue.use(Main);
-// Vue.use(Footer);
+Vue.use(Footer);
 // Vue.use(Timeline);
 // Vue.use(TimelineItem);
 Vue.use(Link);

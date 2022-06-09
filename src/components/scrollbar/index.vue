@@ -1,6 +1,6 @@
 <template>
 	<el-scrollbar
-		class="cl-scrollbar"
+		class="scrollbar"
 		:view-style="[
 			{
 				'overflow-x': 'hidden',
@@ -25,7 +25,7 @@ import { getBrowser } from "cl-admin/utils";
 const { plat } = getBrowser();
 
 export default {
-	name: "cl-scrollbar",
+	name: "scrollbar",
 
 	props: {
 		native: Boolean,

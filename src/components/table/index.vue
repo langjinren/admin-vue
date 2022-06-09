@@ -7,6 +7,7 @@
 				v-on="$listeners"
 				:data="filterData"
 				ref="pageTable"
+				:maxHeight="`${maxHeight}px`"
 			>
 				<slot></slot>
 			</el-table>
@@ -89,6 +90,10 @@ export default {
 		backendPaging: {
 			type: Boolean,
 			default: false
+		},
+		autoHeight: {
+			type: Boolean,
+			default: true
 		}
 	},
 	data() {
@@ -106,7 +111,8 @@ export default {
 
 			tableLoading: false, // 后端分页的loading
 			checkAll: false,
-			isIndeterminate: true
+			isIndeterminate: true,
+			maxHeight: 200
 		};
 	},
 	methods: {
@@ -120,7 +126,6 @@ export default {
 			this.handleChange();
 		},
 		handleChange(reset) {
-			// reset：是否重置页码
 			if (reset) {
 				this.currPage = 1;
 			}
@@ -171,14 +176,13 @@ export default {
 			this.tableLoading = true;
 
 			this.$emit(
-				"backendPagingFunc", // 需要父组件设置该事件，后端分页查询事件别名
+				"backendPagingFunc",
 				this.currPage,
 				this.currPageSize,
-				// 这个参数是一个方法，用于处理后台分页请求返回的数据。等同于直接调用 callback方法
 				res => this.callback(res)
 			);
+			this.calcMaxHeight();
 		},
-		// 后台分页请求返回时的回调方法，设置分页信息，渲染表格
 		callback(res) {
 			this.filterData = res.data;
 			this.totalSize = res.data_total;
@@ -189,13 +193,36 @@ export default {
 
 			this.tableLoading = false;
 		},
-
-		//<el-table>自带的方法 start
 		setCurrentRow(row) {
 			this.$refs.pageTable.setCurrentRow(row);
+		},
+
+		// 计算表格最大高度
+		calcMaxHeight() {
+			if (!this.autoHeight) {
+				return false;
+			}
+			this.$nextTick(() => {
+				const el = this.$el.parentNode;
+				let { height = "" } = this.props || {};
+
+				if (el) {
+					let rows = document.querySelectorAll(".el-row");
+					if (!rows[0] || !rows[0].isConnected) {
+						return false;
+					}
+					let h = 55;
+					for (let i = 0; i < rows.length; i++) {
+						let f = true;
+						if (f) {
+							h += rows[i].clientHeight + 5;
+						}
+					}
+					let h2 = el.clientHeight - h;
+					this.maxHeight = h2;
+				}
+			});
 		}
-		//...
-		//<el-table>自带的方法 end
 	},
 	watch: {
 		data() {
@@ -222,9 +249,12 @@ export default {
 	},
 	mounted() {
 		if (this.backendPaging) {
-			// 触发后端分页查询
 			this.backendPagingFunc();
 		}
+		window.removeEventListener("resize", function () {});
+		window.addEventListener("resize", () => {
+			this.calcMaxHeight();
+		});
 	},
 	beforeUpdate() {
 		let self = this;
@@ -237,13 +267,9 @@ export default {
 
 <style>
 .table_wrap {
-	padding: 15px;
+	padding-top: 10px;
 }
 .table_wrap .el-table {
-	/* width: auto; */
-	/* margin: 14px; */
-	/* border: 1px solid #ebeef5;
-  border-bottom: unset; */
 	border-bottom: unset;
 }
 .table_wrap .footer {

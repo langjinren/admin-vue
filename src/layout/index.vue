@@ -16,7 +16,7 @@
 
 			<!-- 页面进程 -->
 			<div class="page-layout__process" v-if="app.conf.showProcess">
-				<cl-process />
+				<process />
 			</div>
 
 			<!-- 页面视图 -->
@@ -37,11 +37,13 @@
 import { mapGetters, mapMutations } from "vuex";
 import Topbar from "./topbar";
 import Slider from "./slider";
+import Process from "./process";
 import { isEmpty } from "cl-admin/utils";
 
 export default {
 	components: {
 		Topbar,
+		Process,
 		Slider
 	},
 

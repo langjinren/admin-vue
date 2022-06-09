@@ -1,7 +1,7 @@
 <template>
-	<cl-scrollbar>
+	<scrollbar>
 		<div class="home">
 			账号注销
 		</div>
-	</cl-scrollbar>
+	</scrollbar>
 </template>

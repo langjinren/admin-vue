@@ -1,7 +1,7 @@
 <template>
-	<cl-scrollbar>
+	<scrollbar>
 		<div class="home">
 			用户提现
 		</div>
-	</cl-scrollbar>
+	</scrollbar>
 </template>

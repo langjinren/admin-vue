@@ -30,24 +30,23 @@
 				</el-select>
 			</el-col>
 			<el-col :span="params.commentary_type == 2 ? 6 : 6">
-				<el-button type="success" @click="onSearch">搜索</el-button>
+				<el-button type="success" @click="$refs.dataTable.handleChange(true)">搜索</el-button>
 				<el-button @click="onReset">重置</el-button>
 				<commentary-add
 					v-if="params.commentary_type == 3"
 					class="fr"
 					:user-name="user_name"
-					:on-success="toGetMovieCommentaryList"
+					:on-success="$refs.dataTable.backendPagingFunc"
 				/>
 				<el-button
 					class="fr"
 					icon="el-icon-refresh-right"
 					circle
-					@click="toGetMovieCommentaryList"
+					@click="$refs.dataTable.backendPagingFunc()"
 					style="margin-right: 10px;"
 				></el-button>
 			</el-col>
 		</el-row>
-
 		<el-row :gutter="20" v-if="params.commentary_type == 2">
 			<el-col :span="6">
 				<el-input
@@ -132,26 +131,32 @@
 				</el-select>
 			</el-col>
 			<el-col :span="12">
-				<el-button type="success" @click="onSearch">搜索</el-button>
+				<el-button type="success" @click="$refs.dataTable.handleChange(true)">搜索</el-button>
 				<el-button @click="onReset">重置</el-button>
 				<el-button
 					class="fr"
 					icon="el-icon-refresh-right"
 					circle
-					@click="toGetMovieCommentaryList"
+					@click="$refs.dataTable.backendPagingFunc()"
 					style="margin-right: 10px;"
 				></el-button>
 			</el-col>
 		</el-row>
 
-		<el-table
-			:data="tableData"
-			v-loading="loading"
-			border
-			height="80%"
-			element-loading-background="rgba(0, 0, 0, .1)"
-			style="width: 100%; margin-top: 10px; "
-		>
+		<dynamic-table
+			:currentPage="1"
+			:pageSizes="[5, 10, 20, 50, 100, 200]"
+			:pageSize="10"
+			:background="true"
+			:paging="true"
+			
+			:backendPaging="true"
+			@backendPagingFunc="queryTableData"
+			:dynamicColumnSetting="true"
+			:showAlwaysShowColumnInCheckbox="true"
+			:border="true"
+			ref="dataTable"
+			>
 			<el-table-column
 				prop="id"
 				label="#"
@@ -286,11 +291,11 @@
 						:data="scope.row"
 						:user-name="user_name"
 						:commentary-type="params.commentary_type"
-						:on-success="toGetMovieCommentaryList"
+						:on-success="$refs.dataTable.backendPagingFunc"
 					/>
 				</template>
 			</el-table-column>
-		</el-table>
+		</dynamic-table>
 
 		<el-dialog title="下线操作记录" :visible.sync="visibleDialog">
 			<el-table :data="offlineList" border>
@@ -300,15 +305,6 @@
 				<el-table-column prop="create_time" label="创建时间" width="150" />
 			</el-table>
 		</el-dialog>
-
-		<lang-pagination
-			:total="total"
-			:pageSize="params.page_size"
-			:currentPage="params.page_number"
-			:sizeChange="sizeChange"
-			:currentChange="currentChange"
-			:pagination="toGetMovieCommentaryList"
-		/>
 	</div>
 </template>
 
@@ -320,14 +316,12 @@ import {
 } from "@/api/cms/commentary/commentary";
 import { getMovieList } from "@/api/cms/commentary/movie";
 
-import LangPagination from "@/components/Pagination.vue";
 import CommentaryDetail from "./components/Detail.vue";
 import CommentaryAdd from "./components/Add.vue";
 
 export default {
 	name: "MovieCommentary",
 	components: {
-		LangPagination,
 		CommentaryDetail,
 		CommentaryAdd
 	},
@@ -337,8 +331,6 @@ export default {
 			total: 0,
 			tableData: [],
 			params: {
-				page_number: 1,
-				page_size: 10,
 				commentary_title: "",
 				online_status: "",
 				source_id: "",
@@ -378,33 +370,10 @@ export default {
 				`${process.env.VUE_APP_PAGE}/plan_media/to_media_${type}_result?sourceId=${source_id}`
 			);
 		},
-		switchSelectAll(status) {
-			let self = this;
-			let arr = [];
-			self.tableData.map(item => {
-				if (item.audit_status == 0) {
-					if (status) {
-						self.$set(item, "select", true);
-						arr.push(item);
-						return;
-					} else {
-						self.$set(item, "select", false);
-						arr.push(item);
-					}
-				}
-			});
-		},
-		onSearch() {
-			this.$set(this.params, "page_number", 1);
-			this.tableData = [];
-			this.toGetMovieCommentaryList();
-		},
 		onReset() {
 			this.params = Object.assign(
 				{},
 				{
-					page_number: 1,
-					page_size: 10,
 					commentary_title: "",
 					online_status: "",
 					source_id: "",
@@ -416,34 +385,25 @@ export default {
 			);
 			this.$set(this.movieSelect, "movie", "");
 			this.$set(this.movieSelect, "movieList", []);
-			this.toGetMovieCommentaryList();
+			this.$refs.dataTable.handleChange(true)
 		},
-		sizeChange(pageSize) {
-			this.$set(this.params, "page_size", pageSize);
-			this.toGetMovieCommentaryList();
-		},
-		currentChange(currentChange) {
-			this.$set(this.params, "page_number", currentChange);
-			this.toGetMovieCommentaryList();
-		},
-		toGetMovieCommentaryList() {
-			this.loading = true;
+		queryTableData(page_number, page_size, callback) {
 			let commentary_type = this.$route.path.substring(1).split("/")[2] || 0;
 			this.$set(this.params, "commentary_type", commentary_type);
 			let { movie: { movie_id = "" } = {} } = this.movieSelect;
 			getMovieCommentaryList({
 				...this.params,
-				movie_id
+				movie_id,
+				page_number,
+				page_size
 			}).then(res => {
-				if (res.code == 0) {
-					this.tableData = res.content.data;
-					this.total = res.content.data_total;
-				} else {
-					this.tableData = [];
-					this.total = 0;
-				}
-				this.loading = false;
-			});
+        if (res.code == '000000') {  
+          callback({
+            data: res.content.data,
+            data_total: res.content.data_total,
+          })
+        }
+      })
 		},
 		toAudit({ commentary_id, online_status }) {
 			let self = this;
@@ -461,7 +421,7 @@ export default {
 					}).then(res => {
 						if (res.code == "000000") {
 							this.$message.success("操作成功");
-							this.toGetMovieCommentaryList();
+							this.$refs.dataTable.backendPagingFunc()
 						} else {
 							this.$message.error(res.message);
 						}
@@ -482,7 +442,7 @@ export default {
 					}).then(res => {
 						if (res.code == "000000") {
 							this.$message.success("操作成功");
-							this.toGetMovieCommentaryList();
+							this.$refs.dataTable.backendPagingFunc()
 						} else {
 							this.$message.error(res.message);
 						}
@@ -552,13 +512,10 @@ export default {
 			});
 		}
 	},
-	mounted() {
-		this.onSearch();
-	},
 	watch: {
 		$route(to, from) {
 			if (to.path.indexOf("/cms/commentary") >= 0) {
-				this.onSearch();
+				// this.$refs.dataTable.handleChange(true)
 			}
 		}
 	}
