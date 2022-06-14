@@ -175,11 +175,8 @@ export default {
 		backendPagingFunc() {
 			this.tableLoading = true;
 
-			this.$emit(
-				"backendPagingFunc",
-				this.currPage,
-				this.currPageSize,
-				res => this.callback(res)
+			this.$emit("backendPagingFunc", this.currPage, this.currPageSize, res =>
+				this.callback(res)
 			);
 			this.calcMaxHeight();
 		},
@@ -251,7 +248,7 @@ export default {
 		if (this.backendPaging) {
 			this.backendPagingFunc();
 		}
-		window.removeEventListener("resize", function () {});
+		window.removeEventListener("resize", function() {});
 		window.addEventListener("resize", () => {
 			this.calcMaxHeight();
 		});

@@ -50,9 +50,9 @@ export default {
 
 		onTap(item, index) {
 			this.adScroll(index);
-			console.log(item)
-			let value = item.value.split('?')[0]
-			this.$router.push(value+"?r=0");
+			console.log(item);
+			let value = item.value.split("?")[0];
+			this.$router.push(value + "?r=0");
 		},
 
 		onDel(index) {

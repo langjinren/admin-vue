@@ -1,13 +1,11 @@
 <template>
 	<div class="cl-route-nav">
-		<p class="title" v-if="browser.isMini">
-			{{ lastName }}11
-		</p>
+		<p class="title" v-if="browser.isMini">{{ lastName }}</p>
 
 		<template v-else>
 			<el-breadcrumb>
 				<el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-				<el-breadcrumb-item v-for="(item, index) in list" :key="index">22{{
+				<el-breadcrumb-item v-for="(item, index) in list" :key="index">{{
 					(item.meta && item.meta.label) || item.name
 				}}</el-breadcrumb-item>
 			</el-breadcrumb>

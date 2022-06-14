@@ -1,23 +1,7 @@
 <template>
 	<div>
-		<el-row :gutter="20" v-if="params.commentary_type != 2">
-			<el-col :span="6">
-				<el-input
-					v-model.trim="params.phone"
-					placeholder="发布者手机号"
-					prefix-icon="el-icon-search"
-					clearable
-				/>
-			</el-col>
-			<el-col :span="6">
-				<el-input
-					v-model.trim="params.commentary_title"
-					placeholder="解说标题"
-					prefix-icon="el-icon-search"
-					clearable
-				/>
-			</el-col>
-			<el-col :span="6">
+		<el-row :gutter="10">
+			<el-col :span="3">
 				<el-select
 					style="width: 100%"
 					clearable
@@ -29,26 +13,7 @@
 					<el-option label="机构发布" :value="1" />
 				</el-select>
 			</el-col>
-			<el-col :span="params.commentary_type == 2 ? 6 : 6">
-				<el-button type="success" @click="$refs.dataTable.handleChange(true)">搜索</el-button>
-				<el-button @click="onReset">重置</el-button>
-				<commentary-add
-					v-if="params.commentary_type == 3"
-					class="fr"
-					:user-name="user_name"
-					:on-success="$refs.dataTable.backendPagingFunc"
-				/>
-				<el-button
-					class="fr"
-					icon="el-icon-refresh-right"
-					circle
-					@click="$refs.dataTable.backendPagingFunc()"
-					style="margin-right: 10px;"
-				></el-button>
-			</el-col>
-		</el-row>
-		<el-row :gutter="20" v-if="params.commentary_type == 2">
-			<el-col :span="6">
+			<el-col :span="5">
 				<el-input
 					v-model.trim="params.phone"
 					placeholder="发布者手机号"
@@ -56,7 +21,7 @@
 					clearable
 				/>
 			</el-col>
-			<el-col :span="6">
+			<el-col :span="5">
 				<el-input
 					v-model.trim="params.commentary_title"
 					placeholder="解说标题"
@@ -64,18 +29,48 @@
 					clearable
 				/>
 			</el-col>
-			<el-col :span="6" v-if="params.commentary_type == 2">
+			<el-col :span="11">
+				<el-button
+					class="fr"
+					style="margin-left: 10px;"
+					type="primary"
+					@click="$refs.dataTable.handleChange(true)"
+					>搜索</el-button
+				>
+				<el-button class="fr" @click="$refs.dataTable.backendPagingFunc()">刷新</el-button>
+			</el-col>
+		</el-row>
+		<el-row :gutter="10" style="margin-top: 10px; " v-if="params.commentary_type == 2">
+			<el-col :span="3">
+				<el-select
+					style="width: 100%"
+					clearable
+					v-model="params.online_status"
+					placeholder="上线状态"
+				>
+					<el-option label="全部" value="" />
+					<el-option label="上线" :value="0" />
+					<el-option label="下线" :value="1" />
+				</el-select>
+			</el-col>
+			<el-col :span="5" v-if="params.commentary_type == 2">
 				<el-select
 					v-model="movieSelect.movie"
 					value-key="movie_id"
 					placeholder="输入影片名称 选择影片进行搜索"
 					filterable
+					clearable
 					no-data-text="暂无匹配影片数据"
 					no-match-text="暂无匹配影片数据"
 					remote
 					reserve-keyword
 					:remote-method="toGetMovieList"
 					v-loadmore:[movieSelect.direction]="loadMoreMovie"
+					@clear="
+						(movieSelect.movieList = []),
+							(movieSelect.page_number = 1),
+							(movieSelect.loadAll = false)
+					"
 					popper-class="index"
 					style="width: 100%; "
 				>
@@ -105,42 +100,13 @@
 				</el-select>
 			</el-col>
 		</el-row>
-		<el-row :gutter="20" style="margin-top: 10px; " v-if="params.commentary_type == 2">
-			<el-col :span="6">
-				<el-select
-					style="width: 100%"
-					clearable
-					v-model="params.video_type"
-					placeholder="视频类型"
-				>
-					<el-option label="全部" value="" />
-					<el-option label="个人发布" :value="0" />
-					<el-option label="机构发布" :value="1" />
-				</el-select>
-			</el-col>
-			<el-col :span="6">
-				<el-select
-					style="width: 100%"
-					clearable
-					v-model="params.online_status"
-					placeholder="上线状态"
-				>
-					<el-option label="全部" value="" />
-					<el-option label="上线" :value="0" />
-					<el-option label="下线" :value="1" />
-				</el-select>
-			</el-col>
-			<el-col :span="12">
-				<el-button type="success" @click="$refs.dataTable.handleChange(true)">搜索</el-button>
-				<el-button @click="onReset">重置</el-button>
-				<el-button
-					class="fr"
-					icon="el-icon-refresh-right"
-					circle
-					@click="$refs.dataTable.backendPagingFunc()"
-					style="margin-right: 10px;"
-				></el-button>
-			</el-col>
+		<el-row>
+			<commentary-add
+				v-if="params.commentary_type == 3"
+				:user-name="user_name"
+				:on-success="$refs.dataTable.backendPagingFunc"
+				style="display: block; margin-top: 10px; "
+			/>
 		</el-row>
 
 		<dynamic-table
@@ -149,14 +115,13 @@
 			:pageSize="10"
 			:background="true"
 			:paging="true"
-			
 			:backendPaging="true"
 			@backendPagingFunc="queryTableData"
 			:dynamicColumnSetting="true"
 			:showAlwaysShowColumnInCheckbox="true"
 			:border="true"
 			ref="dataTable"
-			>
+		>
 			<el-table-column
 				prop="id"
 				label="#"
@@ -234,6 +199,7 @@
 				label="上线类型"
 				v-if="params.commentary_type == 2"
 				key="9"
+				width="100"
 			>
 				<template slot-scope="scope">
 					<el-button
@@ -241,14 +207,21 @@
 						style="padding: 3px 6px;"
 						@click="toAudit(scope.row)"
 					>
-						{{ scope.row.online_status == 0 ? "上线" : "下线" }}
+						{{
+							scope.row.online_status == 0
+								? "上线"
+								: scope.row.back_status == 1
+								? "下线后打回"
+								: "下线"
+						}}
 					</el-button>
-					<span
+					<p
 						v-if="scope.row.online_status == 1"
 						style="margin-left: 5px; cursor: pointer;"
 						@click="toGetOfflineList(scope.row)"
-						>查看<i class="el-icon-d-arrow-right"></i
-					></span>
+					>
+						查看<i class="el-icon-d-arrow-right"></i>
+					</p>
 				</template>
 			</el-table-column>
 			<el-table-column prop="title_page_url" label="封面" key="10" width="110">
@@ -370,23 +343,6 @@ export default {
 				`${process.env.VUE_APP_PAGE}/plan_media/to_media_${type}_result?sourceId=${source_id}`
 			);
 		},
-		onReset() {
-			this.params = Object.assign(
-				{},
-				{
-					commentary_title: "",
-					online_status: "",
-					source_id: "",
-					phone: "",
-					video_type: "",
-					movie_id: ""
-				},
-				{}
-			);
-			this.$set(this.movieSelect, "movie", "");
-			this.$set(this.movieSelect, "movieList", []);
-			this.$refs.dataTable.handleChange(true)
-		},
 		queryTableData(page_number, page_size, callback) {
 			let commentary_type = this.$route.path.substring(1).split("/")[2] || 0;
 			this.$set(this.params, "commentary_type", commentary_type);
@@ -397,13 +353,13 @@ export default {
 				page_number,
 				page_size
 			}).then(res => {
-        if (res.code == '000000') {  
-          callback({
-            data: res.content.data,
-            data_total: res.content.data_total,
-          })
-        }
-      })
+				if (res.code == "000000") {
+					callback({
+						data: res.content.data,
+						data_total: res.content.data_total
+					});
+				}
+			});
 		},
 		toAudit({ commentary_id, online_status }) {
 			let self = this;
@@ -421,7 +377,7 @@ export default {
 					}).then(res => {
 						if (res.code == "000000") {
 							this.$message.success("操作成功");
-							this.$refs.dataTable.backendPagingFunc()
+							this.$refs.dataTable.backendPagingFunc();
 						} else {
 							this.$message.error(res.message);
 						}
@@ -442,7 +398,7 @@ export default {
 					}).then(res => {
 						if (res.code == "000000") {
 							this.$message.success("操作成功");
-							this.$refs.dataTable.backendPagingFunc()
+							this.$refs.dataTable.backendPagingFunc();
 						} else {
 							this.$message.error(res.message);
 						}
@@ -516,6 +472,7 @@ export default {
 		$route(to, from) {
 			if (to.path.indexOf("/cms/commentary") >= 0) {
 				// this.$refs.dataTable.handleChange(true)
+				this.$refs.dataTable.backendPagingFunc();
 			}
 		}
 	}

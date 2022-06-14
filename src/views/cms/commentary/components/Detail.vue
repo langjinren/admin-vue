@@ -164,7 +164,7 @@
 									v-show="sources != scope.row.video_oss_audit_url"
 									id="pilot_button"
 									@click.native="toPilot(scope.row.video_oss_audit_url)"
-									style="margin-left: 0; "
+									style="margin-left:0; "
 									>试播</el-button
 								>
 							</template>
@@ -229,16 +229,11 @@
 						<el-button
 							size="mini"
 							slot="reference"
+							:type="commentaryType == 1 ? 'warning' : 'danger'"
 							:loading="submitErrLoading"
 							:disabled="submitDisabled"
 							style="margin-left: 10px; float: right; "
-							>{{
-								commentaryType == 0 || commentaryType == 3
-									? "打回到创作者平台"
-									: commentaryType == 2
-									? "下线"
-									: "重新策划"
-							}}</el-button
+							>{{ commentaryType == 1 ? "重新策划" : "打回到创作者平台" }}</el-button
 						>
 						<el-form
 							:model="commentaryData"
@@ -322,21 +317,80 @@
 							>
 						</el-form>
 					</el-popover>
-					<el-button type="primary" @click="toGetWorkflow" class="fr">
+					<el-button
+						v-if="commentaryType != 0"
+						type="primary"
+						@click="toGetWorkflow"
+						class="fr"
+					>
 						查看工作流
 					</el-button>
 				</el-form-item>
 				<el-form-item v-if="commentaryType == 2">
-					<el-button type="primary" @click="toGetWorkflow" class="fr">
-						查看工作流
-					</el-button>
 					<el-button
-						type="danger"
+						type="warning"
 						@click="toInitCache"
+						class="fr"
+						style="margin-left: 5px; "
+					>
+						初始化解说缓存
+					</el-button>
+					<el-popover
+						placement="bottom-end"
+						min-width="120"
+						trigger="click"
+						:ref="`popoverGiveUpRef`"
+						v-if="data.online_status == 1 && data.back_status == 0"
+					>
+						<el-button
+							size="mini"
+							slot="reference"
+							type="danger"
+							:loading="submitErrLoading"
+							:disabled="submitDisabled"
+							style="float: right; "
+							>打回到创作者平台</el-button
+						>
+						<el-form
+							:model="commentaryData"
+							:rules="commentaryRules"
+							ref="auditForm"
+							label-width="80px"
+							label-position="left"
+							size="mini"
+							style="padding: 10px 0 0 10px; width: 400px; "
+						>
+							<el-form-item label="原因" :key="1" prop="audit_reason">
+								<el-input
+									v-model="commentaryData.audit_reason"
+									type="textarea"
+									resize="none"
+									placeholder="请填写打回原因"
+									:autosize="{ minRows: 5, maxRows: 6 }"
+								/>
+							</el-form-item>
+							<el-button
+								size="mini"
+								type="primary"
+								style="float: right; margin-left: 10px;"
+								@click="giveUp"
+								>确认</el-button
+							>
+							<el-button
+								size="mini"
+								style="float: right; "
+								@click="$refs[`popoverGiveUpRef`].doClose()"
+								>取消</el-button
+							>
+						</el-form>
+					</el-popover>
+					<el-button
+						type="primary"
+						@click="toGetWorkflow"
 						class="fr"
 						style="margin-right: 5px; "
 					>
-						初始化解说缓存
+						查看工作流
 					</el-button>
 				</el-form-item>
 			</el-form>
@@ -367,6 +421,8 @@
 								? "策划中"
 								: "" || scope.row.workflow_status == "RE_DO"
 								? "重新策划中"
+								: "" || scope.row.workflow_status == "FINAL_AUDIT_FAIL"
+								? "发布后打回"
 								: ""
 						}}
 					</template>
@@ -379,6 +435,7 @@
 					width="140"
 				></el-table-column>
 				<el-table-column prop="re_edit_user" label="策划操作人"></el-table-column>
+				<el-table-column prop="re_edit_reason" label="策划打回原因"></el-table-column>
 				<el-table-column prop="re_edit_time" label="策划时间" width="140"></el-table-column>
 				<el-table-column prop="release_user" label="发布操作人"></el-table-column>
 				<el-table-column prop="release_reason" label="发布打回原因"></el-table-column>
@@ -426,7 +483,8 @@ let sourceStatus = {
 	TRANSCODE_SUCCESSFUL: "转码成功",
 	WAIT_CLEAN_JOB: "等待清除任务",
 	READY_MULT_BIT: "准备多码率转码",
-	CLEANED_JOB: "清除任务"
+	CLEANED_JOB: "清除任务",
+	FINAL_AUDIT_FAIL: "已发布打回"
 };
 
 export default {
@@ -500,36 +558,7 @@ export default {
 	},
 	methods: {
 		initVideo() {
-			let _this = this;
-			player = videojs(this.$refs.videoPlayer, this.videoOptions, function() {
-				var baseComponent = videojs.getComponent("Component");
-				var myComponent = videojs.extend(baseComponent, {
-					constructor: function() {
-						baseComponent.apply(this, arguments);
-						this.on("click", this.clickIcon);
-					},
-					createEl: function() {
-						var divObj = videojs.dom.createEl("div", {
-							className: "vjs-my-components",
-							innerHTML: "<span></span>"
-						});
-						return divObj;
-					},
-					clickIcon: function() {
-						player.pause();
-						let Detail = _this.$router.resolve({
-							name: "Video",
-							query: {
-								src: _this.videoOptions.sources[0].src,
-								currentTime: Math.floor(player.currentTime())
-							}
-						});
-						window.open(Detail.href, "_blank");
-					}
-				});
-				videojs.registerComponent("myComponent", myComponent);
-				player.getChild("controlBar").addChild("myComponent");
-			});
+			player = videojs(this.$refs.videoPlayer, this.videoOptions, function() {});
 			this.onKeyup();
 			player.load(this.sources);
 			player.volume(0.5);
@@ -668,6 +697,8 @@ export default {
 					);
 					this.$set(this.commentaryData, "title", res.content.title || "");
 					this.$set(this.commentaryData, "description", res.content.description || "");
+				} else {
+					this.$message.error(res.message);
 				}
 			});
 		},
@@ -832,13 +863,13 @@ export default {
 			}).then(res => {
 				if (res.code == "000000") {
 					this.$message.success("操作成功");
-					this.onSuccess && this.onSuccess();
 					this.toggleDrawer = false;
 					this.closeDialog();
 				} else {
 					this.$message.error(res.message);
 				}
 				this.cancelSaveMovie();
+				this.onSuccess && this.onSuccess();
 				this.submitSuccessLoading = false;
 				this.submitErrLoading = false;
 				this.submitDisabled = false;
@@ -888,31 +919,6 @@ export default {
 	max-height: 40vh;
 }
 
-.video-js .vjs-fullscreen-control {
-	display: none;
-}
-.vjs-icon-fullscreen-enter:before,
-.video-js .vjs-my-components {
-	position: relative;
-	text-align: center;
-	margin: 0;
-	padding: 0;
-	height: 100%;
-	width: 4em;
-	cursor: pointer;
-	flex: none;
-}
-.vjs-icon-fullscreen-enter:before,
-.video-js .vjs-my-components span {
-	display: block;
-	font-family: VideoJS;
-	font-size: 2em;
-	line-height: 1.67;
-}
-.vjs-icon-fullscreen-enter:before,
-.video-js .vjs-my-components span:before {
-	content: "\f108";
-}
 .is_mov_video {
 	display: inline-block;
 	color: #f42c2c;
